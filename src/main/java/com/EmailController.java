@@ -18,13 +18,13 @@ public class EmailController{
     // Show the form
     @GetMapping("/email-form")
     public String showForm(Model model) {
-        model.addAttribute("emailRequest", new EmailRequest());
+        model.addAttribute("ticket", new Ticket());
         return "email-form"; // maps to email-form.html
     }
 
     // Handle form submission
     @PostMapping("/send-email")
-    public String sendEmail(@Valid @ModelAttribute("emailRequest") EmailRequest emailRequest,
+    public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket,
                             BindingResult result,
                             Model model) {
 
@@ -33,15 +33,11 @@ public class EmailController{
         }
 
         try {
-            emailService.sendSimpleEmail(
-                emailRequest.getTo(),
-                emailRequest.getSubject(),
-                emailRequest.getBody()
-            );
-            model.addAttribute("successMessage", "✅ Email sent successfully to " + emailRequest.getTo());
-            model.addAttribute("emailRequest", new EmailRequest()); // reset form
+            emailService.sendSimpleEmail(ticket);
+            model.addAttribute("successMessage", "✅ Ticket submitted successfully to " + ticket.getEmail());
+            model.addAttribute("ticket", new Ticket()); // reset form
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "❌ Failed to send email: " + e.getMessage());
+            model.addAttribute("errorMessage", "❌ Failed to send ticket: " + e.getMessage());
         }
 
         return "email-form";
