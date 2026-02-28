@@ -59,6 +59,26 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
+
+		<!-- Using Spring data jpa and h2 chose h2 becuase we need this to work across all machines local server will not persist and will need configuraiton-->
+		<dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+		<dependency>
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+<!--this dependecny is needed in the latest version of spring  -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-h2console</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-docker-compose</artifactId>

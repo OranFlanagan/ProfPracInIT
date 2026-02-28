@@ -3,7 +3,19 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
 import org.springframework.web.multipart.MultipartFile;
 
+//H2 dependencies 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+
+@Entity
 public class Ticket {
+
+    @Id
+    //ensures that id auto increments so no ticket is the same
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int orderNum;
 
     @NotBlank(message = "Name is required")

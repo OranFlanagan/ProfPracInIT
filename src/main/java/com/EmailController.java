@@ -9,11 +9,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+
 @Controller
 public class EmailController{
 
     @Autowired
     private EmailService emailService;
+
+    private final TicketService ticketService;
+
+    public EmailController(TicketService ticketService) {
+    this.ticketService = ticketService;
+    }
+
+
 
     // Show the form
     @GetMapping("/email-form")
@@ -24,13 +38,12 @@ public class EmailController{
 
     // Handle form submission
     @PostMapping("/send-email")
-    public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket,
-                            BindingResult result,
-                            Model model) {
+    public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket,BindingResult result,Model model)
+    {       
 
-        if (result.hasErrors()) {
-            return "email-form"; // return to form with validation errors
-        }
+            //this should always go through without depending on email service 
+            
+            ticketService.createTicket(ticket);
 
         try {
             emailService.sendSimpleEmail(ticket);
@@ -43,6 +56,19 @@ public class EmailController{
             model.addAttribute("errorMessage", "❌ Failed to send ticket: " + e.getMessage());
         }
 
-        return "email-form";
+
+
+             try {
+                //Commented out for time being due to auth issue
+                //emailService.sendSimpleEmail(ticket);
+                model.addAttribute("successMessage", " Ticket submitted successfully to " + ticket.getEmail());
+                model.addAttribute("ticket", new Ticket()); // reset form
+                } 
+            catch (Exception e) 
+            {
+             model.addAttribute("errorMessage", " Failed to send ticket: " + e.getMessage());
+            }
+
+            return "email-form";
     }
 }
