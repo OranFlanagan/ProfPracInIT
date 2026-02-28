@@ -33,6 +33,7 @@
         }
         input[type="email"],
         input[type="text"],
+        input[type="file"],
         textarea {
             padding: 10px;
             margin-top: 5px;
@@ -43,6 +44,7 @@
         }
         input[type="email"]:focus,
         input[type="text"]:focus,
+        input[type="file"]:focus,
         textarea:focus {
             outline: none;
             border-color: #4CAF50;
@@ -104,7 +106,7 @@
         </div>
 
         <!-- Ticket Form -->
-        <form th:action="@{/send-email}" th:object="${ticket}" method="post">
+        <form th:action="@{/send-email}" th:object="${ticket}" method="post" enctype="multipart/form-data">
 
             <!-- Name Field -->
             <label for="name">Full Name:</label>
@@ -132,6 +134,13 @@
             <textarea id="issueDescription" th:field="*{issueDescription}" placeholder="Describe the issue you're experiencing..." required></textarea>
             <div th:if="${#fields.hasErrors('issueDescription')}" class="field-error">
                 <span th:errors="*{issueDescription}"></span>
+            </div>
+
+            <!-- Attachment Field -->
+            <label for="attachment">Attachment (Optional):</label>
+            <input type="file" id="attachment" th:field="*{attachment}" placeholder="Choose a file to attach">
+            <div class="field-error" style="color: #666; font-size: 12px; margin-top: 3px;">
+                Max file size: 10MB
             </div>
 
             <!-- Submit Button -->

@@ -34,7 +34,10 @@ public class EmailController{
 
         try {
             emailService.sendSimpleEmail(ticket);
-            model.addAttribute("successMessage", "✅ Ticket submitted successfully to " + ticket.getEmail());
+            String attachmentInfo = (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) 
+                ? " with attachment" 
+                : "";
+            model.addAttribute("successMessage", "✅ Ticket submitted successfully to " + ticket.getEmail() + attachmentInfo);
             model.addAttribute("ticket", new Ticket()); // reset form
         } catch (Exception e) {
             model.addAttribute("errorMessage", "❌ Failed to send ticket: " + e.getMessage());

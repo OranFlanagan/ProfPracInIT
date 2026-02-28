@@ -1,6 +1,7 @@
 package com;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
+import org.springframework.web.multipart.MultipartFile;
 
 public class Ticket {
     private int orderNum;
@@ -16,6 +17,8 @@ public class Ticket {
 
     private String issueDescription;
 
+    private MultipartFile attachment;
+
     public int getOrderNum() { return orderNum; }
     public void setOrderNum(int orderNum) { this.orderNum = orderNum; }
 
@@ -30,4 +33,7 @@ public class Ticket {
 
     public String getIssueDescription() { return issueDescription; }
     public void setIssueDescription(String issueDescription) { this.issueDescription = issueDescription; }
+
+    public MultipartFile getAttachment() { return attachment; }
+    public void setAttachment(MultipartFile attachment) { this.attachment = attachment; }
 }
