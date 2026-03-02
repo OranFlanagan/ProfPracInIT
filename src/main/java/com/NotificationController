@@ -1,4 +1,4 @@
-@RestController
+/*@RestController
 public class NotificationController {
 
     @Autowired

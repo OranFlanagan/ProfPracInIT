@@ -1,74 +1,83 @@
 package com;
 
 import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.ui.Model;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.beans.factory.annotation.Autowired;
-
-
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class EmailController{
+public class EmailController {
 
-    @Autowired
-    private EmailService emailService;
-
+    private final EmailService emailService;
     private final TicketService ticketService;
 
-    public EmailController(TicketService ticketService) {
-    this.ticketService = ticketService;
+    public EmailController(EmailService emailService, TicketService ticketService) {
+        this.emailService = emailService;
+        this.ticketService = ticketService;
     }
 
+    // Show navigation page
+    @GetMapping("/navigation-page")
+    public String showNavigation() {
+        return "navigation-page";
+    }
 
+    // Show staff dashboard
+    @GetMapping("/staff-dashboard")
+    public String showStaffDashboard() {
+        return "staff-dashboard";
+    }
 
     // Show the form
     @GetMapping("/email-form")
     public String showForm(Model model) {
+        // We provide a blank Ticket object for the form to bind to
         model.addAttribute("ticket", new Ticket());
-        return "email-form"; // maps to email-form.html
+        return "email-form"; 
     }
 
     // Handle form submission
     @PostMapping("/send-email")
-    public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket,BindingResult result,Model model)
-    {       
+    public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket, 
+                            BindingResult result, 
+                            Model model) {
 
-            //this should always go through without depending on email service 
-            
+        // 1. Check for validation errors (Empty name, bad email, etc.)
+        if (result.hasErrors()) {
+            return "email-form"; 
+        }
+
+        // 2. Always save to the H2 Database first
+        // This ensures the data is kept even if the email fails
+        try {
             ticketService.createTicket(ticket);
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", "❌ Database Error: Could not save ticket.");
+            return "email-form";
+        }
 
+        // 3. Attempt to send the email
         try {
             emailService.sendSimpleEmail(ticket);
+            
             String attachmentInfo = (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) 
                 ? " with attachment" 
                 : "";
-            model.addAttribute("successMessage", "✅ Ticket submitted successfully to " + ticket.getEmail() + attachmentInfo);
-            model.addAttribute("ticket", new Ticket()); // reset form
+                
+            model.addAttribute("successMessage", "✅ Ticket #" + ticket.getOrderNum() + 
+                               " saved and sent to " + ticket.getEmail() + attachmentInfo);
+            
+            // Reset the form after success
+            model.addAttribute("ticket", new Ticket()); 
+            
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "❌ Failed to send ticket: " + e.getMessage());
+            // If email fails, we tell the user the ticket was still saved to the DB
+            model.addAttribute("errorMessage", "⚠️ Ticket saved to database, but email failed: " + e.getMessage());
         }
 
-
-
-             try {
-                //Commented out for time being due to auth issue
-                //emailService.sendSimpleEmail(ticket);
-                model.addAttribute("successMessage", " Ticket submitted successfully to " + ticket.getEmail());
-                model.addAttribute("ticket", new Ticket()); // reset form
-                } 
-            catch (Exception e) 
-            {
-             model.addAttribute("errorMessage", " Failed to send ticket: " + e.getMessage());
-            }
-
-            return "email-form";
+        return "email-form";
     }
 }

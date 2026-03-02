@@ -9,6 +9,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+
+enum TicketStatus {
+    UNASSIGNED,
+    ASSIGNED,
+    IN_PROGRESS,
+    UNDER_REVIEW,
+    COMPLETE
+}
 
 
 @Entity
@@ -17,7 +27,7 @@ public class Ticket {
     @Id
     //ensures that id auto increments so no ticket is the same
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int orderNum;
+    private Long orderNum;
 
     @NotBlank(message = "Name is required")
     private String Name;
@@ -30,11 +40,14 @@ public class Ticket {
 
     private String issueDescription;
 
+    @Enumerated(EnumType.STRING)
+    private TicketStatus status = TicketStatus.UNASSIGNED;
+
     @Transient
     private MultipartFile attachment;
 
-    public int getOrderNum() { return orderNum; }
-    public void setOrderNum(int orderNum) { this.orderNum = orderNum; }
+    public Long getOrderNum() { return orderNum; }
+    public void setOrderNum(Long orderNum) { this.orderNum = orderNum; }
 
     public String getName() { return Name; }
     public void setName(String name) { this.Name = name; }
@@ -50,4 +63,7 @@ public class Ticket {
 
     public MultipartFile getAttachment() { return attachment; }
     public void setAttachment(MultipartFile attachment) { this.attachment = attachment; }
+
+    public TicketStatus getStatus() { return status; }
+    public void setStatus(TicketStatus status) { this.status = status; }
 }
