@@ -1,18 +1,25 @@
 package com;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 public class EmailController {
 
     private final EmailService emailService;
     private final TicketService ticketService;
+
+    @Autowired
+    private EmailMessageRepository emailMessageRepository;
 
     public EmailController(EmailService emailService, TicketService ticketService) {
         this.emailService = emailService;
@@ -80,5 +87,15 @@ public class EmailController {
         }
 
         return "email-form";
+    }
+
+    // Ticket detail view
+    @GetMapping("/tickets/{id}")
+    public String viewTicket(@PathVariable Long id, Model model) {
+        Ticket ticket = ticketService.findById(id);
+        List<EmailMessage> thread = emailMessageRepository.findByTicketOrderByTimestampAsc(ticket);
+        model.addAttribute("ticket", ticket);
+        model.addAttribute("thread", thread);
+        return "ticket-details";
     }
 }

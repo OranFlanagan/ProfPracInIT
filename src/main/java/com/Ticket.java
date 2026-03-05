@@ -3,6 +3,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.persistence.Column;
 //H2 dependencies 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,6 +39,7 @@ public class Ticket {
 
     private String phoneNum;
 
+    @Column(columnDefinition = "TEXT")
     private String issueDescription;
 
     @Enumerated(EnumType.STRING)
