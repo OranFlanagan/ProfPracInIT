@@ -1,6 +1,7 @@
 package com;
 
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 
 
@@ -16,6 +17,11 @@ public class TicketService {
 
     public void createTicket(Ticket ticket) {
         ticketRepository.save(ticket);
+    }
+
+    // Return all tickets for display on the staff dashboard
+    public List<Ticket> getAllTickets() {
+        return ticketRepository.findAll();
     }
 }
 

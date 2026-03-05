@@ -27,7 +27,8 @@ public class EmailController {
 
     // Show staff dashboard
     @GetMapping("/staff-dashboard")
-    public String showStaffDashboard() {
+    public String showStaffDashboard(Model model) {
+        model.addAttribute("tickets", ticketService.getAllTickets());
         return "staff-dashboard";
     }
 

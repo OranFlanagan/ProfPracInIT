@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,13 +32,108 @@
         .back-link:hover {
             text-decoration: underline;
         }
+
+        /* Grid / table styles */
+        .tickets-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .tickets-table thead th {
+            text-align: left;
+            padding: 12px 8px;
+            background: #f0f4f8;
+            color: #333;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .tickets-table tbody td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eef2f7;
+            vertical-align: top;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            color: white;
+        }
+        .UNASSIGNED { background:#6b7280; }
+        .ASSIGNED { background:#2563eb; }
+        .IN_PROGRESS { background:#f59e0b; }
+        .UNDER_REVIEW { background:#6366f1; }
+        .COMPLETE { background:#10b981; }
+
+        .actions button {
+            margin-right: 6px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background: white;
+            cursor: pointer;
+        }
+
+        .no-tickets { padding: 20px; color:#6b7280; }
+        @media (max-width: 800px) {
+            .tickets-table thead { display: none; }
+            .tickets-table, .tickets-table tbody, .tickets-table tr, .tickets-table td { display: block; width: 100%; }
+            .tickets-table tr { margin-bottom: 12px; }
+            .tickets-table td { border: none; padding: 8px 0; }
+            .tickets-table td::before { font-weight:600; display:block; color:#374151; }
+            .tickets-table td.column-orderNum::before { content: "Order #"; }
+            .tickets-table td.column-name::before { content: "Name"; }
+            .tickets-table td.column-email::before { content: "Email"; }
+            .tickets-table td.column-phone::before { content: "Phone"; }
+            .tickets-table td.column-issue::before { content: "Issue"; }
+            .tickets-table td.column-status::before { content: "Status"; }
+            .tickets-table td.column-actions::before { content: "Actions"; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <a href="/navigation-page" class="back-link">← Back to Navigation</a>
         <h1>Staff Dashboard</h1>
-        <p>Welcome to the staff dashboard. Content will be added here.</p>
+
+        <div>
+            <table class="tickets-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Issue</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${tickets == null or #lists.isEmpty(tickets)}">
+                        <td class="no-tickets" colspan="7">No tickets found.</td>
+                    </tr>
+                    <tr th:each="ticket : ${tickets}">
+                        <td class="column-orderNum" th:text="${ticket.orderNum}">1</td>
+                        <td class="column-name" th:text="${ticket.name}">John</td>
+                        <td class="column-email" th:text="${ticket.email}">john@example.com</td>
+                        <td class="column-phone" th:text="${ticket.phoneNum}">01234</td>
+                        <td class="column-issue" th:text="${#strings.abbreviate(ticket.issueDescription, 100)}">Issue details...</td>
+                        <td class="column-status">
+                            <span th:text="${ticket.status}" th:classappend="' status-badge ' + ${ticket.status}">UNASSIGNED</span>
+                        </td>
+                        <td class="column-actions actions">
+                            <!-- Simple actions: view details and a placeholder button to change status -->
+                            <a th:href="@{'/tickets/' + ${ticket.orderNum}}"><button type="button">View</button></a>
+                            <form th:action="@{'/tickets/' + ${ticket.orderNum} + '/advance'}" method="post" th:onsubmit="return confirm('Advance ticket status?');" style="display:inline">
+                                <button type="submit">Advance</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </body>
 </html>
