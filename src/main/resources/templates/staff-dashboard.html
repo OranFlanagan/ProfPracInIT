@@ -88,6 +88,7 @@
             .tickets-table td.column-issue::before { content: "Issue"; }
             .tickets-table td.column-status::before { content: "Status"; }
             .tickets-table td.column-actions::before { content: "Actions"; }
+            .tickets-table td.column-attachment::before { content: "Attachment"; }
         }
     </style>
 </head>
@@ -106,12 +107,13 @@
                         <th>Phone</th>
                         <th>Issue</th>
                         <th>Status</th>
+                        <th>Attachment</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${tickets == null or #lists.isEmpty(tickets)}">
-                        <td class="no-tickets" colspan="7">No tickets found.</td>
+                        <td class="no-tickets" colspan="8">No tickets found.</td>
                     </tr>
                     <tr th:each="ticket : ${tickets}">
                         <td class="column-orderNum" th:text="${ticket.orderNum}">1</td>
@@ -121,6 +123,12 @@
                         <td class="column-issue" th:text="${#strings.abbreviate(ticket.issueDescription, 100)}">Issue details...</td>
                         <td class="column-status">
                             <span th:text="${ticket.status}" th:classappend="' status-badge ' + ${ticket.status}">UNASSIGNED</span>
+                        </td>
+                        <td class="column-attachment">
+                            <a th:if="${ticket.attachmentFilename != null}"
+                               th:href="@{'/tickets/' + ${ticket.orderNum} + '/attachment'}"
+                               th:text="${ticket.attachmentFilename}">Download</a>
+                            <span th:unless="${ticket.attachmentFilename != null}">—</span>
                         </td>
                         <td class="column-actions actions">
                             <!-- Simple actions: view details and a placeholder button to change status -->

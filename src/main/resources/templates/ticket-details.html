@@ -38,12 +38,11 @@
         <div th:text="${ticket.issueDescription}"></div>
     </div>
     <div class="section">
-        <span class="label">Attachments:</span>
-        <ul>
-            <!-- <li th:each="file : ${ticket.attachments}">
-                <a th:href="@{'/attachments/' + ${file.id}}" th:text="${file.filename}"></a>
-            </li> -->
-        </ul>
+        <span class="label">Attachment:</span>
+        <span th:if="${ticket.attachmentFilename != null}">
+            <a th:href="@{'/tickets/' + ${ticket.orderNum} + '/attachment'}" th:text="${ticket.attachmentFilename}">Download</a>
+        </span>
+        <span th:unless="${ticket.attachmentFilename != null}">None</span>
     </div>
     <div class="section">
         <span class="label">Internal Notes:</span>
@@ -58,7 +57,7 @@
         <div th:each="email : ${thread}" class="thread-message">
             <div class="meta">
                 <strong th:text="${email.sender}"></strong>
-                <span th:text="${#dates.format(email.timestamp, 'yyyy-MM-dd HH:mm')}"></span>
+                <span th:text="${#temporals.format(email.timestamp, 'yyyy-MM-dd HH:mm')}"></span>
                 <span th:if="${email.inbound}" style="color: #2563eb;">(Customer)</span>
                 <span th:if="${!email.inbound}" style="color: #10b981;">(Staff)</span>
             </div>

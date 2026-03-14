@@ -15,7 +15,12 @@ public class TicketService {
         this.ticketRepository = ticketRepository;
     }
 
-    public void createTicket(Ticket ticket) {
+    public void createTicket(Ticket ticket) throws Exception {
+        if (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) {
+            ticket.setAttachmentData(ticket.getAttachment().getBytes());
+            ticket.setAttachmentFilename(ticket.getAttachment().getOriginalFilename());
+            ticket.setAttachmentContentType(ticket.getAttachment().getContentType());
+        }
         ticketRepository.save(ticket);
     }
 

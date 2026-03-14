@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
@@ -48,6 +49,14 @@ public class Ticket {
     @Transient
     private MultipartFile attachment;
 
+    @Lob
+    @Column(name = "attachment_data")
+    private byte[] attachmentData;
+
+    private String attachmentFilename;
+
+    private String attachmentContentType;
+
     public Long getOrderNum() { return orderNum; }
     public void setOrderNum(Long orderNum) { this.orderNum = orderNum; }
 
@@ -68,4 +77,13 @@ public class Ticket {
 
     public TicketStatus getStatus() { return status; }
     public void setStatus(TicketStatus status) { this.status = status; }
+
+    public byte[] getAttachmentData() { return attachmentData; }
+    public void setAttachmentData(byte[] attachmentData) { this.attachmentData = attachmentData; }
+
+    public String getAttachmentFilename() { return attachmentFilename; }
+    public void setAttachmentFilename(String attachmentFilename) { this.attachmentFilename = attachmentFilename; }
+
+    public String getAttachmentContentType() { return attachmentContentType; }
+    public void setAttachmentContentType(String attachmentContentType) { this.attachmentContentType = attachmentContentType; }
 }

@@ -8,6 +8,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -97,5 +100,22 @@ public class EmailController {
         model.addAttribute("ticket", ticket);
         model.addAttribute("thread", thread);
         return "ticket-details";
+    }
+
+    // Download attachment for a ticket
+    @GetMapping("/tickets/{id}/attachment")
+    public ResponseEntity<byte[]> downloadAttachment(@PathVariable Long id) {
+        Ticket ticket = ticketService.findById(id);
+        if (ticket == null || ticket.getAttachmentData() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        String contentType = ticket.getAttachmentContentType() != null
+                ? ticket.getAttachmentContentType()
+                : "application/octet-stream";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + ticket.getAttachmentFilename() + "\"")
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(ticket.getAttachmentData());
     }
 }
