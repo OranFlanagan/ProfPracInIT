@@ -26,6 +26,7 @@
       }
     }
   },
-  "postCreateCommand": "chmod +x ./mvnw && ./mvnw -q -DskipTests dependency:go-offline",
-  "postStartCommand": "./mvnw -q -v"
+  "postCreateCommand": "chmod +x ./mvnw .devcontainer/post-start.sh && ./mvnw -q -DskipTests dependency:go-offline",
+  "postStartCommand": ".devcontainer/post-start.sh && ./mvnw -q -v",
+  "postAttachCommand": ".devcontainer/post-start.sh"
 }

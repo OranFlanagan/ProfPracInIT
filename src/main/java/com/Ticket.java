@@ -32,7 +32,7 @@ public class Ticket {
     private Long orderNum;
 
     @NotBlank(message = "Name is required")
-    private String Name;
+    private String name;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
@@ -60,8 +60,8 @@ public class Ticket {
     public Long getOrderNum() { return orderNum; }
     public void setOrderNum(Long orderNum) { this.orderNum = orderNum; }
 
-    public String getName() { return Name; }
-    public void setName(String name) { this.Name = name; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

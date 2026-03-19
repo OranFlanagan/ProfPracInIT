@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -101,6 +103,9 @@ public class EmailController {
     @GetMapping("/tickets/{id}")
     public String viewTicket(@PathVariable Long id, Model model) {
         Ticket ticket = ticketService.findById(id);
+        if (ticket == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
+        }
         List<EmailMessage> thread = emailMessageRepository.findByTicketOrderByTimestampAsc(ticket);
         model.addAttribute("ticket", ticket);
         model.addAttribute("thread", thread);

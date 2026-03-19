@@ -1,6 +1,7 @@
 package com;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ import org.springframework.core.io.InputStreamSource;
 public class EmailService 
 {
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
+    @Value("${app.mail.from:${spring.mail.username:no-reply@example.com}}")
+    private String fromAddress;
     
  @Autowired
     private JavaMailSender mailSender; 
@@ -25,7 +29,7 @@ public class EmailService
             // Set multipart to true with UTF-8 encoding
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
-            helper.setFrom("ticketorc@gmail.com");
+            helper.setFrom(fromAddress);
             helper.setTo(ticket.getEmail());
             
             // Format subject as [OrderNum] | Email | Name
