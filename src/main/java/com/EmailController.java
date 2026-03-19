@@ -29,6 +29,11 @@ public class EmailController {
         this.ticketService = ticketService;
     }
 
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/navigation-page";
+    }
+
     // Show navigation page
     @GetMapping("/navigation-page")
     public String showNavigation() {

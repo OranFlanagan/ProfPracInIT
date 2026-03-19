@@ -3,9 +3,7 @@ package com;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import org.apache.commons.math3.analysis.function.Identity;
-
-//Identity
+@Entity
 public class EmailMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
