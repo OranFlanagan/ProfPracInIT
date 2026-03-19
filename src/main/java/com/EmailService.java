@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.InputStreamSource;
@@ -28,9 +30,12 @@ public class EmailService
             MimeMessage message = mailSender.createMimeMessage();
             // Set multipart to true with UTF-8 encoding
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            String resolvedFromAddress = resolveValidAddress(fromAddress, "no-reply@example.com");
+            String recipientAddress = requireValidAddress(ticket.getEmail(), "recipient");
             
-            helper.setFrom(fromAddress);
-            helper.setTo(ticket.getEmail());
+            helper.setFrom(resolvedFromAddress);
+            helper.setTo(recipientAddress);
             
             // Format subject as [OrderNum] | Email | Name
             String subject = String.format("[%d] | %s | %s", 
@@ -78,6 +83,40 @@ public class EmailService
         } catch (Exception e) {
             logger.error("❌ Unexpected error: {}", e.getMessage());
             throw new RuntimeException("Failed to process email: " + e.getMessage(), e);
+        }
+    }
+
+    private String resolveValidAddress(String candidate, String fallback) throws AddressException {
+        if (isValidAddress(candidate)) {
+            return candidate.trim();
+        }
+
+        if (isValidAddress(fallback)) {
+            logger.warn("Invalid app.mail.from value '{}'; falling back to {}", candidate, fallback);
+            return fallback;
+        }
+
+        throw new AddressException("No valid sender email address configured");
+    }
+
+    private String requireValidAddress(String candidate, String label) throws AddressException {
+        if (!isValidAddress(candidate)) {
+            throw new AddressException("Invalid " + label + " email address: " + candidate);
+        }
+        return candidate.trim();
+    }
+
+    private boolean isValidAddress(String candidate) {
+        if (candidate == null || candidate.trim().isEmpty()) {
+            return false;
+        }
+
+        try {
+            InternetAddress internetAddress = new InternetAddress(candidate.trim(), true);
+            internetAddress.validate();
+            return true;
+        } catch (AddressException ex) {
+            return false;
         }
     }
 }
