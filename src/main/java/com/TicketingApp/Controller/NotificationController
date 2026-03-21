@@ -1,0 +1,16 @@
+/*@RestController
+public class NotificationController {
+
+    @Autowired
+    private EmailService emailService;
+
+    @PostMapping("/send-email")
+    public ResponseEntity<String> sendEmail() {
+        emailService.sendSimpleEmail(
+            "recipient@example.com",
+            "Hello!",
+            "This is a test email from Spring Boot."
+        );
+        return ResponseEntity.ok("Email sent!");
+    }
+}

@@ -1,4 +1,4 @@
-package com;
+package com.TicketingApp.Entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

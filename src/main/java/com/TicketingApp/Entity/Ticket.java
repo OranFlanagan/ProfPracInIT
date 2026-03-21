@@ -1,4 +1,4 @@
-package com;
+package com.TicketingApp.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Email;
 import org.springframework.web.multipart.MultipartFile;

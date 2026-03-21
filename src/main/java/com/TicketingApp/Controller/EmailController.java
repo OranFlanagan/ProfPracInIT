@@ -1,4 +1,4 @@
-package com;
+package com.TicketingApp.Controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.TicketingApp.Entity.EmailMessage;
+import com.TicketingApp.Entity.Ticket;
+import com.TicketingApp.Repository.EmailMessageRepository;
+import com.TicketingApp.Service.EmailService;
+import com.TicketingApp.Service.TicketService;
 
 import java.util.List;
 

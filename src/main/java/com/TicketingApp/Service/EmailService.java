@@ -1,4 +1,4 @@
-package com;
+package com.TicketingApp.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +13,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.InputStreamSource;
+import com.TicketingApp.Entity.Ticket;
 
 @Service
 public class EmailService 

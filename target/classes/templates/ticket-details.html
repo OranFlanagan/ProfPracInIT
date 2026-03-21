@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        .section { margin-bottom: 24px; }
+        .label { font-weight: bold; color: #555; }
+        .thread-message { border-bottom: 1px solid #eee; padding: 12px 0; }
+        .thread-message .meta { font-size: 13px; color: #888; margin-bottom: 4px; }
+        .thread-message .body { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Ticket #<span th:text="${ticket.orderNum}"></span></h2>
+    <div class="section">
+        <span class="label">Status:</span> <span th:text="${ticket.status}"></span> |
+        <!-- <span class="label">Assignee:</span> <span th:text="${ticket.assignee}"></span> -->
+    </div>
+    <div class="section">
+        <!-- <span class="label">Created:</span> <span th:text="${#dates.format(ticket.createdAt, 'yyyy-MM-dd HH:mm')}"></span> | -->
+        <!-- <span class="label">Last Updated:</span> <span th:text="${#dates.format(ticket.updatedAt, 'yyyy-MM-dd HH:mm')}"></span> -->
+    </div>
+    <div class="section">
+        <span class="label">Customer:</span> <span th:text="${ticket.name}"></span> (<span th:text="${ticket.email}"></span>)<br>
+        <span class="label">Phone:</span> <span th:text="${ticket.phoneNum}"></span><br>
+        <span class="label">Order #:</span> <span th:text="${ticket.orderNum}"></span><br>
+        <!-- <span class="label">Product:</span> <span th:text="${ticket.product}"></span><br> -->
+        <!-- <span class="label">Category:</span> <span th:text="${ticket.category}"></span><br> -->
+        <!-- <span class="label">Serial #:</span> <span th:text="${ticket.serialNumber}"></span> -->
+    </div>
+    <div class="section">
+        <span class="label">Issue Description:</span>
+        <div th:text="${ticket.issueDescription}"></div>
+    </div>
+    <div class="section">
+        <span class="label">Attachment:</span>
+        <span th:if="${ticket.attachmentFilename != null}">
+            <a th:href="@{'/tickets/' + ${ticket.orderNum} + '/attachment'}" th:text="${ticket.attachmentFilename}">Download</a>
+        </span>
+        <span th:unless="${ticket.attachmentFilename != null}">None</span>
+    </div>
+    <div class="section">
+        <span class="label">Internal Notes:</span>
+        <ul>
+            <!-- <li th:each="note : ${ticket.internalNotes}">
+                <span th:text="${note.text}"></span> <i>(by <span th:text="${note.author}"></span> at <span th:text="${#dates.format(note.timestamp, 'yyyy-MM-dd HH:mm')}"></span>)</i>
+            </li> -->
+        </ul>
+    </div>
+    <div class="section">
+        <span class="label">Message Thread:</span>
+        <div th:each="email : ${thread}" class="thread-message">
+            <div class="meta">
+                <strong th:text="${email.sender}"></strong>
+                <span th:text="${#temporals.format(email.timestamp, 'yyyy-MM-dd HH:mm')}"></span>
+                <span th:if="${email.inbound}" style="color: #2563eb;">(Customer)</span>
+                <span th:if="${!email.inbound}" style="color: #10b981;">(Staff)</span>
+            </div>
+            <div class="body" th:text="${email.body}"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

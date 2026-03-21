@@ -1,6 +1,10 @@
-package com;
+package com.TicketingApp.Service;
 
 import org.springframework.stereotype.Service;
+
+import com.TicketingApp.Entity.Ticket;
+import com.TicketingApp.Repository.TicketRepository;
+
 import java.util.List;
 
 
