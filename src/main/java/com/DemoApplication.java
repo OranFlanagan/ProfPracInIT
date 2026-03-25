@@ -9,7 +9,7 @@ public class DemoApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 
-		System.out.println("******************************************************* SYSTEM UP AND RUNNING! ****************************************************************");
+		System.out.println("******************************************************** SYSTEM UP AND RUNNING! ****************************************************************");
 	}
 
 }
