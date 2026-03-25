@@ -1,5 +1,4 @@
 package com.TicketingApp.Entity;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -30,10 +29,9 @@ public static enum Roles {
 @Enumerated(EnumType.STRING)
 private Roles role;
 
-private String userName;
+private String username;
 
-private String passWord;
-
+private String password;
 
 
 }

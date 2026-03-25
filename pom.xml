@@ -68,13 +68,18 @@
 			<optional>true</optional>
 		</dependency>
 
-
-		<!-- Using Spring data jpa and h2 chose h2 becuase we need this to work across all machines local server will not persist and will need configuraiton-->
+		
 		<dependency>
-    <groupId>com.h2database</groupId>
-    <artifactId>h2</artifactId>
-    <scope>runtime</scope>
-</dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+	
+		<!-- using supabase -->
+		<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+		</dependency>
 
 		<dependency>
     		<groupId>org.springframework.boot</groupId>
@@ -123,6 +128,8 @@
 			<artifactId>testcontainers-mysql</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- spring security needed for userdetailsService-->
 	
    <dependency>
      <groupId>org.apache.commons</groupId>
