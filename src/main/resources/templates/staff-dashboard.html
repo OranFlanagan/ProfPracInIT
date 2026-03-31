@@ -73,6 +73,18 @@
             background: white;
             cursor: pointer;
         }
+        .status-form {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .status-form select {
+            padding: 6px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+        }
 
         .no-tickets { padding: 20px; color:#6b7280; }
         @media (max-width: 800px) {
@@ -131,10 +143,19 @@
                             <span th:unless="${ticket.attachmentFilename != null}">—</span>
                         </td>
                         <td class="column-actions actions">
-                            <!-- Simple actions: view details and a placeholder button to change status -->
                             <a th:href="@{'/tickets/' + ${ticket.orderNum}}"><button type="button">View</button></a>
-                            <form th:action="@{'/tickets/' + ${ticket.orderNum} + '/advance'}" method="post" th:onsubmit="return confirm('Advance ticket status?');" style="display:inline">
-                                <button type="submit">Advance</button>
+                            <form class="status-form" th:action="@{'/tickets/' + ${ticket.orderNum} + '/status'}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <input type="hidden" name="redirectTo" value="/staff-dashboard">
+                                <select name="status" aria-label="Select ticket status">
+                                    <option th:each="statusOption : ${ticketStatuses}"
+                                            th:value="${statusOption}"
+                                            th:text="${statusOption}"
+                                            th:selected="${statusOption == ticket.status}">
+                                        UNASSIGNED
+                                    </option>
+                                </select>
+                                <button type="submit">Update</button>
                             </form>
                         </td>
                     </tr>

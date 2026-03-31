@@ -7,18 +7,38 @@
         body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         h2 { color: #333; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #007bff; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
         .section { margin-bottom: 24px; }
         .label { font-weight: bold; color: #555; }
         .thread-message { border-bottom: 1px solid #eee; padding: 12px 0; }
         .thread-message .meta { font-size: 13px; color: #888; margin-bottom: 4px; }
         .thread-message .body { white-space: pre-wrap; }
+        .status-form { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .status-form select { padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; background: white; }
+        .status-form button { padding: 6px 10px; border-radius: 6px; border: 1px solid #d1d5db; background: white; cursor: pointer; }
     </style>
 </head>
 <body>
 <div class="container">
+    <a href="/staff-dashboard" class="back-link">← Back to Staff Dashboard</a>
     <h2>Ticket #<span th:text="${ticket.orderNum}"></span></h2>
     <div class="section">
-        <span class="label">Status:</span> <span th:text="${ticket.status}"></span> |
+        <span class="label">Status:</span> <span th:text="${ticket.status}"></span>
+        <form class="status-form" th:action="@{'/tickets/' + ${ticket.orderNum} + '/status'}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden" name="redirectTo" value="/staff-dashboard">
+            <select name="status" aria-label="Select ticket status">
+                <option th:each="statusOption : ${ticketStatuses}"
+                        th:value="${statusOption}"
+                        th:text="${statusOption}"
+                        th:selected="${statusOption == ticket.status}">
+                    UNASSIGNED
+                </option>
+            </select>
+            <button type="submit">Update Status</button>
+        </form>
+        |
         <!-- <span class="label">Assignee:</span> <span th:text="${ticket.assignee}"></span> -->
     </div>
     <div class="section">

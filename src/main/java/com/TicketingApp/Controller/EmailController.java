@@ -12,11 +12,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.TicketingApp.Entity.EmailMessage;
 import com.TicketingApp.Entity.Ticket;
+import com.TicketingApp.Entity.TicketStatus;
 import com.TicketingApp.Repository.EmailMessageRepository;
 import com.TicketingApp.Service.EmailService;
 import com.TicketingApp.Service.TicketService;
@@ -52,6 +54,7 @@ public class EmailController {
     @GetMapping("/staff-dashboard")
     public String showStaffDashboard(Model model) {
         model.addAttribute("tickets", ticketService.getAllTickets());
+        model.addAttribute("ticketStatuses", TicketStatus.values());
         return "staff-dashboard";
     }
 
@@ -114,8 +117,22 @@ public class EmailController {
         }
         List<EmailMessage> thread = emailMessageRepository.findByTicketOrderByTimestampAsc(ticket);
         model.addAttribute("ticket", ticket);
+        model.addAttribute("ticketStatuses", TicketStatus.values());
         model.addAttribute("thread", thread);
         return "ticket-details";
+    }
+
+    @PostMapping("/tickets/{id}/status")
+    public String updateTicketStatus(
+            @PathVariable Long id,
+            @RequestParam("status") TicketStatus status,
+            @RequestParam(value = "redirectTo", required = false) String redirectTo) {
+        Ticket ticket = ticketService.updateStatus(id, status);
+        if (ticket == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
+        }
+
+        return "redirect:" + resolveRedirectPath(id, redirectTo);
     }
 
     // Download attachment for a ticket
@@ -133,5 +150,13 @@ public class EmailController {
                         "attachment; filename=\"" + ticket.getAttachmentFilename() + "\"")
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(ticket.getAttachmentData());
+    }
+
+    private String resolveRedirectPath(Long id, String redirectTo) {
+        if (redirectTo != null && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
+            return redirectTo;
+        }
+
+        return "/tickets/" + id;
     }
 }

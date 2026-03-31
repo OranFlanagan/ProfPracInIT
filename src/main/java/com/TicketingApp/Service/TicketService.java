@@ -3,6 +3,7 @@ package com.TicketingApp.Service;
 import org.springframework.stereotype.Service;
 
 import com.TicketingApp.Entity.Ticket;
+import com.TicketingApp.Entity.TicketStatus;
 import com.TicketingApp.Repository.TicketRepository;
 
 import java.util.List;
@@ -36,6 +37,16 @@ public class TicketService {
     // Find a ticket by its ID
     public Ticket findById(Long id) {
         return ticketRepository.findById(id).orElse(null);
+    }
+
+    public Ticket updateStatus(Long id, TicketStatus status) {
+        Ticket ticket = findById(id);
+        if (ticket == null) {
+            return null;
+        }
+
+        ticket.setStatus(status);
+        return ticketRepository.save(ticket);
     }
 }
 

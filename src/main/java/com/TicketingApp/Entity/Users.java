@@ -33,5 +33,17 @@ private String username;
 
 private String password;
 
+public Roles getRole() {
+    return role;
+}
+
+public String getUsername() {
+    return username;
+}
+
+public String getPassword() {
+    return password;
+}
+
 
 }

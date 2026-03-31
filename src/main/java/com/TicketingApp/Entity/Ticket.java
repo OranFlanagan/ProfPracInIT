@@ -14,15 +14,6 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 
-enum TicketStatus {
-    UNASSIGNED,
-    ASSIGNED,
-    IN_PROGRESS,
-    UNDER_REVIEW,
-    COMPLETE
-}
-
-
 @Entity
 public class Ticket {
 
