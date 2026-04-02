@@ -25,6 +25,9 @@ import com.TicketingApp.Service.TicketService;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 @Controller
 public class EmailController {
 
@@ -52,9 +55,12 @@ public class EmailController {
 
     // Show staff dashboard
     @GetMapping("/staff-dashboard")
-    public String showStaffDashboard(Model model) {
+    public String showStaffDashboard(Model model, Authentication authentication) {
         model.addAttribute("tickets", ticketService.getAllTickets());
         model.addAttribute("ticketStatuses", TicketStatus.values());
+        boolean isAdmin = authentication != null &&
+                authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
         return "staff-dashboard";
     }
 

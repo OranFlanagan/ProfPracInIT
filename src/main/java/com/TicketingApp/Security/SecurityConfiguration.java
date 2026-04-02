@@ -12,9 +12,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/email-form/**").permitAll().anyRequest().authenticated()
-    ).formLogin(Customizer.withDefaults());
-    return http.build();
+        http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/email-form/**").permitAll()
+            .requestMatchers("/admin/**").hasRole("ADMIN")
+            .anyRequest().authenticated()
+        ).formLogin(Customizer.withDefaults());
+        return http.build();
     }
 
 

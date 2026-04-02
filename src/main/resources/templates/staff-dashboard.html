@@ -109,6 +109,10 @@
         <a href="/navigation-page" class="back-link">← Back to Navigation</a>
         <h1>Staff Dashboard</h1>
 
+        <div th:if="${isAdmin}" style="margin-bottom: 20px;">
+            <a href="/admin" style="display:inline-block;padding:10px 20px;background:#2563eb;color:white;border-radius:6px;text-decoration:none;font-weight:600;">Admin Panel</a>
+        </div>
+
         <div>
             <table class="tickets-table">
                 <thead>

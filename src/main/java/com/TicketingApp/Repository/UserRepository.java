@@ -6,5 +6,5 @@ import com.TicketingApp.Entity.Users;
 
 public interface UserRepository extends JpaRepository<Users, Long>{
     Users findByUsername(String username);
-
+    boolean existsByUsername(String username);
 }
