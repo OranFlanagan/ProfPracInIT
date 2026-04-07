@@ -14,7 +14,5 @@ public String getSupportPage() {
     return "support-page";
 }
 
- 
-
 
 }
