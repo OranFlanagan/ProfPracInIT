@@ -133,6 +133,14 @@
     color: var(--muted);
   }
 
+  .card-image {
+    width: 100%;
+    height: 150px;   
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+
   .statusbar span strong { color: var(--text); }
 </style>
 </head>
@@ -147,13 +155,25 @@
   <div class="product-grid">
 
    
-    <a th:href = "@{email-form}" class="card-link">
+<div th:each="product : ${products}">
+  <a th:href="@{email-form}" class="card-link">
+
     <div class="product-card active">    
+      
       <div class="card-badge">open</div>
-      <div class="card-id">#001</div>
-      <div class="card-name">Placeholder</div>
+      
+      <div class="card-id" 
+           th:text="'#' + ${product.id}"></div>
+      
+      <div class="card-name" 
+           th:text="${product.name}"></div>
+
+      <img th:src="${product.urlString}" 
+           alt="Product Image" 
+           class="card-image">
     </div>
-    </a>
+  </a>
+</div>
 
     <div class="product-card">
       <div class="card-id">#002</div>

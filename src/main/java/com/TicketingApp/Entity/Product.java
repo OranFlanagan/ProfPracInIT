@@ -8,20 +8,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.Data;
 
 
+@Data
 @Entity
 public class Product {
     
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     
     private String name;
 
-    private String catagory;
+    private String category;
 
     private String urlString;
+
+    private boolean featuredOnSupportPage;
 
 
     // one to many relationship rule needed for list as database cannot store a list and needs to use forgein keys to know what common issue a product migh have by referencing 
