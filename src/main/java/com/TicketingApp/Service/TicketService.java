@@ -7,6 +7,7 @@ import com.TicketingApp.Entity.TicketStatus;
 import com.TicketingApp.Repository.TicketRepository;
 
 import java.util.List;
+import java.util.Set;
 
 
 
@@ -16,12 +17,17 @@ public class TicketService {
 
   private final TicketRepository ticketRepository;
 
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
+            "pdf", "png", "jpg", "jpeg", "gif", "doc", "docx", "txt", "csv", "xlsx"
+    );
+
     public TicketService(TicketRepository ticketRepository) {
         this.ticketRepository = ticketRepository;
     }
 
     public void createTicket(Ticket ticket) throws Exception {
         if (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) {
+            validateFileType(ticket.getAttachment().getOriginalFilename());
             ticket.setAttachmentData(ticket.getAttachment().getBytes());
             ticket.setAttachmentFilename(ticket.getAttachment().getOriginalFilename());
             ticket.setAttachmentContentType(ticket.getAttachment().getContentType());
@@ -37,6 +43,18 @@ public class TicketService {
     // Find a ticket by its ID
     public Ticket findById(Long id) {
         return ticketRepository.findById(id).orElse(null);
+    }
+
+    private void validateFileType(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            throw new IllegalArgumentException(
+                    "File must have an extension. Accepted: " + ALLOWED_EXTENSIONS);
+        }
+        String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+        if (!ALLOWED_EXTENSIONS.contains(extension)) {
+            throw new IllegalArgumentException(
+                    "File type '" + extension + "' is not allowed. Accepted: " + ALLOWED_EXTENSIONS);
+        }
     }
 
     public Ticket updateStatus(Long id, TicketStatus status) {
