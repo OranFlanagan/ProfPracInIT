@@ -8,6 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -151,9 +152,11 @@ public class EmailController {
         String contentType = ticket.getAttachmentContentType() != null
                 ? ticket.getAttachmentContentType()
                 : "application/octet-stream";
+        ContentDisposition disposition = ContentDisposition.attachment()
+                .filename(ticket.getAttachmentFilename())
+                .build();
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + ticket.getAttachmentFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(ticket.getAttachmentData());
     }
