@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.TicketingApp.Entity.EmailMessage;
 import com.TicketingApp.Entity.Ticket;
@@ -159,6 +160,23 @@ public class EmailController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(ticket.getAttachmentData());
+    }
+
+    @PostMapping("/tickets/{id}/delete")
+    public String deleteTicket(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            boolean deleted = ticketService.deleteTicket(id);
+            if (deleted) {
+                redirectAttributes.addFlashAttribute("deleteSuccessMessage", "Ticket deleted successfully.");
+            } else {
+                redirectAttributes.addFlashAttribute("deleteErrorMessage",
+                        "Ticket could not be deleted because it no longer exists.");
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("deleteErrorMessage",
+                    "Ticket could not be deleted. Please try again.");
+        }
+        return "redirect:/staff-dashboard";
     }
 
     private String resolveRedirectPath(Long id, String redirectTo) {

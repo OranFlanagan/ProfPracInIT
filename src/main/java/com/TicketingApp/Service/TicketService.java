@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.TicketingApp.Entity.Ticket;
 import com.TicketingApp.Entity.TicketStatus;
+import com.TicketingApp.Repository.EmailMessageRepository;
 import com.TicketingApp.Repository.TicketRepository;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.util.Set;
 public class TicketService {
 
   private final TicketRepository ticketRepository;
+    private final EmailMessageRepository emailMessageRepository;
     private static final Detector DETECTOR = new DefaultDetector();
 
     private static final Map<String, Set<String>> ALLOWED_FILE_TYPES = Map.ofEntries(
@@ -45,8 +47,9 @@ public class TicketService {
         ))
     );
 
-    public TicketService(TicketRepository ticketRepository) {
+    public TicketService(TicketRepository ticketRepository, EmailMessageRepository emailMessageRepository) {
         this.ticketRepository = ticketRepository;
+        this.emailMessageRepository = emailMessageRepository;
     }
 
     public void createTicket(Ticket ticket) throws Exception {
@@ -125,6 +128,17 @@ public class TicketService {
 
         ticket.setStatus(status);
         return ticketRepository.save(ticket);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public boolean deleteTicket(Long id) {
+        Ticket ticket = findById(id);
+        if (ticket == null) {
+            return false;
+        }
+        emailMessageRepository.deleteByTicket(ticket);
+        ticketRepository.delete(ticket);
+        return true;
     }
 }
 

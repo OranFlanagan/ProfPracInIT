@@ -23,6 +23,11 @@
 <div class="container">
     <a href="/staff-dashboard" class="back-link">← Back to Staff Dashboard</a>
     <h2>Ticket #<span th:text="${ticket.orderNum}"></span></h2>
+    <form th:action="@{'/tickets/' + ${ticket.orderNum} + '/delete'}" method="post" style="display:inline;margin-bottom:16px;"
+          onsubmit="return confirm('Are you sure you want to delete this ticket?');">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <button type="submit" style="padding:8px 16px;background:#dc2626;color:white;border:1px solid #dc2626;border-radius:6px;cursor:pointer;font-size:14px;font-weight:500;">Delete Ticket</button>
+    </form>
     <div class="section">
         <span class="label">Status:</span> <span th:text="${ticket.status}"></span>
         <form class="status-form" th:action="@{'/tickets/' + ${ticket.orderNum} + '/status'}" method="post">

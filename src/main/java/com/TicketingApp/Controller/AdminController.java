@@ -70,11 +70,17 @@ public class AdminController {
 
     @PostMapping("/staff/{id}/delete")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        boolean success = userManagementService.deleteUser(id);
-        if (success) {
-            redirectAttributes.addFlashAttribute("successMessage", "User deleted successfully.");
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
+        try {
+            boolean success = userManagementService.deleteUser(id);
+            if (success) {
+                redirectAttributes.addFlashAttribute("deleteSuccessMessage", "User deleted successfully.");
+            } else {
+                redirectAttributes.addFlashAttribute("deleteErrorMessage",
+                        "User could not be deleted because it no longer exists.");
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("deleteErrorMessage",
+                    "User could not be deleted. Please try again.");
         }
         return "redirect:/admin";
     }

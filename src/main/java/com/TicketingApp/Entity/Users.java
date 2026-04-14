@@ -33,6 +33,10 @@ private String username;
 
 private String password;
 
+public Long getId() {
+    return id;
+}
+
 public Roles getRole() {
     return role;
 }
