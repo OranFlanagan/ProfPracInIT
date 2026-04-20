@@ -23,7 +23,9 @@ import com.TicketingApp.Entity.Ticket;
 import com.TicketingApp.Entity.TicketStatus;
 import com.TicketingApp.Repository.EmailMessageRepository;
 import com.TicketingApp.Service.EmailService;
+
 import com.TicketingApp.Service.TicketService;
+import com.TicketingApp.Service.UserManagementService;
 
 import java.util.List;
 
@@ -31,17 +33,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Controller
-public class EmailController {
 
+public class EmailController {
     private final EmailService emailService;
     private final TicketService ticketService;
+    private final UserManagementService userManagementService;
 
     @Autowired
     private EmailMessageRepository emailMessageRepository;
 
-    public EmailController(EmailService emailService, TicketService ticketService) {
+    public EmailController(EmailService emailService, TicketService ticketService, UserManagementService userManagementService) {
         this.emailService = emailService;
         this.ticketService = ticketService;
+        this.userManagementService = userManagementService;
     }
 
     @GetMapping("/")
@@ -60,6 +64,9 @@ public class EmailController {
     public String showStaffDashboard(Model model, Authentication authentication) {
         model.addAttribute("tickets", ticketService.getAllTickets());
         model.addAttribute("ticketStatuses", TicketStatus.values());
+        model.addAttribute("staffList", userManagementService.getAllUsers().stream()
+            .filter(u -> u.getRole() != null && (u.getRole().name().equals("ROLE_STAFF") || u.getRole().name().equals("ROLE_ADMIN")))
+            .toList());
         boolean isAdmin = authentication != null &&
                 authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
         model.addAttribute("isAdmin", isAdmin);
@@ -126,8 +133,22 @@ public class EmailController {
         List<EmailMessage> thread = emailMessageRepository.findByTicketOrderByTimestampAsc(ticket);
         model.addAttribute("ticket", ticket);
         model.addAttribute("ticketStatuses", TicketStatus.values());
+        model.addAttribute("staffList", userManagementService.getAllUsers().stream()
+            .filter(u -> u.getRole() != null && (u.getRole().name().equals("ROLE_STAFF") || u.getRole().name().equals("ROLE_ADMIN")))
+            .toList());
         model.addAttribute("thread", thread);
         return "ticket-details";
+    }
+    @PostMapping("/tickets/{id}/assign")
+    public String updateAssignedStaff(
+            @PathVariable Long id,
+            @RequestParam("assignedStaff") String staffUsername,
+            @RequestParam(value = "redirectTo", required = false) String redirectTo) {
+        Ticket ticket = ticketService.updateAssignedStaff(id, staffUsername);
+        if (ticket == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
+        }
+        return "redirect:" + resolveRedirectPath(id, redirectTo);
     }
 
     @PostMapping("/tickets/{id}/status")

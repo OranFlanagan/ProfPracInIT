@@ -1,3 +1,4 @@
+
 package com.TicketingApp.Service;
 
 import org.apache.tika.detect.DefaultDetector;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 
 
 
@@ -69,6 +71,18 @@ public class TicketService {
     // Return all tickets for display on the staff dashboard
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
+    }
+
+    /**
+     * Returns tickets sorted by newest first. If oldestFirst is true, reverses the list in memory.
+     */
+    public List<Ticket> getAllTicketsSorted(boolean oldestFirst) {
+        List<Ticket> tickets = ticketRepository.findAll();
+        tickets.sort((t1, t2) -> t2.getCreationTime().compareTo(t1.getCreationTime())); // newest first
+        if (oldestFirst) {
+            Collections.reverse(tickets);
+        }
+        return tickets;
     }
 
     // Find a ticket by its ID
@@ -127,6 +141,15 @@ public class TicketService {
         }
 
         ticket.setStatus(status);
+        return ticketRepository.save(ticket);
+    }
+
+        public Ticket updateAssignedStaff(Long id, String staffUsername) {
+        Ticket ticket = findById(id);
+        if (ticket == null) {
+            return null;
+        }
+        ticket.setAssignedStaff(staffUsername);
         return ticketRepository.save(ticket);
     }
 

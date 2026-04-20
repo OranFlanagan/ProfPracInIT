@@ -13,7 +13,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
-
+import java.time.LocalDateTime;
 @Entity
 public class Ticket {
 
@@ -40,6 +40,7 @@ public class Ticket {
     @Transient
     private MultipartFile attachment;
 
+
     @Lob
     @Column(name = "attachment_data")
     private byte[] attachmentData;
@@ -47,6 +48,11 @@ public class Ticket {
     private String attachmentFilename;
 
     private String attachmentContentType;
+
+    @Column(name = "creation_time", nullable = false, updatable = false)
+    private LocalDateTime creationTime;
+
+    private String assignedStaff;
 
     public Long getOrderNum() { return orderNum; }
     public void setOrderNum(Long orderNum) { this.orderNum = orderNum; }
@@ -77,4 +83,15 @@ public class Ticket {
 
     public String getAttachmentContentType() { return attachmentContentType; }
     public void setAttachmentContentType(String attachmentContentType) { this.attachmentContentType = attachmentContentType; }
+
+    public LocalDateTime getCreationTime() { return creationTime; }
+    public void setCreationTime(LocalDateTime creationTime) { this.creationTime = creationTime; }
+
+    public String getAssignedStaff() { return assignedStaff; }
+    public void setAssignedStaff(String assignedStaff) { this.assignedStaff = assignedStaff; }
+
+    @jakarta.persistence.PrePersist
+    protected void onCreate() {
+        this.creationTime = LocalDateTime.now();
+    }
 }

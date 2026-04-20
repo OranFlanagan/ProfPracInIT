@@ -43,8 +43,21 @@
             </select>
             <button type="submit">Update Status</button>
         </form>
-        |
-        <!-- <span class="label">Assignee:</span> <span th:text="${ticket.assignee}"></span> -->
+    </div>
+    <div class="section">
+        <span class="label">Assigned Staff:</span>
+        <form class="status-form" th:action="@{'/tickets/' + ${ticket.orderNum} + '/assign'}" method="post" style="display:inline;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <input type="hidden" name="redirectTo" th:value="@{'/tickets/' + ${ticket.orderNum}}">
+            <select name="assignedStaff" aria-label="Assign staff">
+                <option value="" th:selected="${ticket.assignedStaff == null}">—</option>
+                <option th:each="staff : ${staffList}"
+                        th:value="${staff.username}"
+                        th:text="${staff.username}"
+                        th:selected="${staff.username == ticket.assignedStaff}"></option>
+            </select>
+            <button type="submit">Assign</button>
+        </form>
     </div>
     <div class="section">
         <!-- <span class="label">Created:</span> <span th:text="${#dates.format(ticket.createdAt, 'yyyy-MM-dd HH:mm')}"></span> | -->

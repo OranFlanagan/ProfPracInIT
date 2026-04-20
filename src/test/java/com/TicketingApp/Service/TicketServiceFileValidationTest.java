@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 class TicketServiceFileValidationTest {
 
-    private final TicketService service = new TicketService(null);
+    private final TicketService service = new TicketService(null, null);
 
     @Test
     void acceptsPdfWhenExtensionMatches() throws Exception {

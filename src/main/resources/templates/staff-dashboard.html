@@ -151,12 +151,9 @@
                 <thead>
                     <tr>
                         <th>Order #</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Issue</th>
+                        <th>Submitter</th>
                         <th>Status</th>
-                        <th>Attachment</th>
+                        <th>Assigned Staff</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -167,17 +164,22 @@
                     <tr th:each="ticket : ${tickets}">
                         <td class="column-orderNum" th:text="${ticket.orderNum}">1</td>
                         <td class="column-name" th:text="${ticket.name}">John</td>
-                        <td class="column-email" th:text="${ticket.email}">john@example.com</td>
-                        <td class="column-phone" th:text="${ticket.phoneNum}">01234</td>
-                        <td class="column-issue" th:text="${#strings.abbreviate(ticket.issueDescription, 100)}">Issue details...</td>
                         <td class="column-status">
                             <span th:text="${ticket.status}" th:classappend="' status-badge ' + ${ticket.status}">UNASSIGNED</span>
                         </td>
-                        <td class="column-attachment">
-                            <a th:if="${ticket.attachmentFilename != null}"
-                               th:href="@{'/tickets/' + ${ticket.orderNum} + '/attachment'}"
-                               th:text="${ticket.attachmentFilename}">Download</a>
-                            <span th:unless="${ticket.attachmentFilename != null}">—</span>
+                        <td class="column-assignedStaff">
+                            <form class="status-form" th:action="@{'/tickets/' + ${ticket.orderNum} + '/assign'}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <input type="hidden" name="redirectTo" value="/staff-dashboard">
+                                <select name="assignedStaff" aria-label="Assign staff">
+                                    <option value="" th:selected="${ticket.assignedStaff == null}">—</option>
+                                    <option th:each="staff : ${staffList}"
+                                            th:value="${staff.username}"
+                                            th:text="${staff.username}"
+                                            th:selected="${staff.username == ticket.assignedStaff}"></option>
+                                </select>
+                                <button type="submit">Assign</button>
+                            </form>
                         </td>
                         <td class="column-actions actions">
                             <a th:href="@{'/tickets/' + ${ticket.orderNum}}"><button type="button">View</button></a>
