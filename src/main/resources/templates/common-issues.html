@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Support</title>
+    <link rel="stylesheet" th:href="@{/styles/common-issues.css}">
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Product Display -->
+        <div class="product-box">
+            <div class="product-image">
+                <!-- Replace src dynamically -->
+                <img src="placeholder.jpg" alt="Product Image">
+            </div>
+
+            <!-- Product Name (optional backend injection) -->
+            <h2 class="product-title">Product Name</h2>
+
+            <!-- Change product -->
+            <a href="#" class="change-product">Change Product</a>
+        </div>
+
+        <!-- Dynamic Highlight / Issue Banner -->
+        <div class="highlight-box">
+            <!-- Backend-driven content -->
+            <p>Main Issue / Alert for this product</p>
+        </div>
+
+        <!-- Common Issues -->
+        <div class="issues-section">
+
+            <div class="issue-card">
+                <h3>Issue 1</h3>
+                <p>Short description of the issue.</p>
+            </div>
+
+            <div class="issue-card">
+                <h3>Issue 2</h3>
+                <p>Short description of the issue.</p>
+            </div>
+
+            <div class="issue-card">
+                <h3>Issue 3</h3>
+                <p>Short description of the issue.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

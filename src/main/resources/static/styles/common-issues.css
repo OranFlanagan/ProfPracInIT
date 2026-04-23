@@ -1,0 +1,80 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Product Box */
+.product-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.product-image img {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.product-title {
+    margin: 10px 0;
+}
+
+.change-product {
+    display: inline-block;
+    margin-top: 5px;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.change-product:hover {
+    text-decoration: underline;
+}
+
+/* Highlight Box */
+.highlight-box {
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+/* Issues Section */
+.issues-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.issue-card {
+    flex: 1 1 calc(33.333% - 10px);
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    min-width: 200px;
+}
+
+.issue-card h3 {
+    margin-top: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .issues-section {
+        flex-direction: column;
+    }
+}
