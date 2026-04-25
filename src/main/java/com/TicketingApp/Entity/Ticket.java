@@ -31,6 +31,12 @@ public class Ticket {
 
     private String phoneNum;
 
+    @Column(name = "invoice_num")
+    private String invoiceNum;
+
+    @Column(name = "school_organisation")
+    private String schoolOrganisation;
+
     @Column(columnDefinition = "TEXT")
     private String issueDescription;
 
@@ -65,6 +71,12 @@ public class Ticket {
 
     public String getPhoneNum() { return phoneNum; }
     public void setPhoneNum(String phoneNum) { this.phoneNum = phoneNum; }
+
+        public String getInvoiceNum() { return invoiceNum; }
+        public void setInvoiceNum(String invoiceNum) { this.invoiceNum = invoiceNum; }
+
+        public String getSchoolOrganisation() { return schoolOrganisation; }
+        public void setSchoolOrganisation(String schoolOrganisation) { this.schoolOrganisation = schoolOrganisation; }
 
     public String getIssueDescription() { return issueDescription; }
     public void setIssueDescription(String issueDescription) { this.issueDescription = issueDescription; }

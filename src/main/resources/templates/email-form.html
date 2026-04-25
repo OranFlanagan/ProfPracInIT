@@ -144,6 +144,20 @@
                 <span th:errors="*{phoneNum}"></span>
             </div>
 
+            <!-- Invoice Number Field -->
+            <label for="invoiceNum">Invoice Number:</label>
+            <input type="text" id="invoiceNum" th:field="*{invoiceNum}" placeholder="Enter invoice number (if applicable)">
+            <div th:if="${#fields.hasErrors('invoiceNum')}" class="field-error">
+                <span th:errors="*{invoiceNum}"></span>
+            </div>
+
+            <!-- School/Organisation Field -->
+            <label for="schoolOrganisation">School/Organisation:</label>
+            <input type="text" id="schoolOrganisation" th:field="*{schoolOrganisation}" placeholder="Enter your school or organisation">
+            <div th:if="${#fields.hasErrors('schoolOrganisation')}" class="field-error">
+                <span th:errors="*{schoolOrganisation}"></span>
+            </div>
+
             <!-- Issue Description Field -->
             <label for="issueDescription">Issue Description:</label>
             <textarea id="issueDescription" th:field="*{issueDescription}" placeholder="Describe the issue you're experiencing..." required></textarea>
