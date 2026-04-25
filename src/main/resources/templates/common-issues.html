@@ -52,5 +52,14 @@
 
     </div>
 
+
+    <h1>Raspberry Pi Issues</h1>
+
+<ul>
+    <li th:each="issue : ${issues}">
+        <span th:text="${issue.Title}"></span>
+    </li>
+</ul>
+
 </body>
 </html>
