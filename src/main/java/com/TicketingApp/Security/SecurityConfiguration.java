@@ -16,6 +16,9 @@ public class SecurityConfiguration {
             .requestMatchers("/email-form/**").permitAll()
             .requestMatchers("/support-page/**").permitAll()
             .requestMatchers("/common-issues/**").permitAll()
+            .requestMatchers("/common-issues.css/**").permitAll()
+            .requestMatchers("/product-log.css/**").permitAll()
+            .requestMatchers("/styles/**", "/css/**", "/js/**", "/images/**").permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         ).formLogin(Customizer.withDefaults());
