@@ -9,13 +9,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Transient;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import java.time.LocalDateTime;
 @Entity
 public class Ticket {
+
+    
 
     @Id
     //ensures that id auto increments so no ticket is the same
@@ -47,13 +48,14 @@ public class Ticket {
     private MultipartFile attachment;
 
 
-    @Lob
-    @Column(name = "attachment_data")
-    private byte[] attachmentData;
 
     private String attachmentFilename;
 
-    private String attachmentContentType;
+    // Not persisted: used to expose the public URL
+    @Transient
+    private String attachmentUrl;
+
+    private String supabaseFilename;
 
     @Column(name = "creation_time", nullable = false, updatable = false)
     private LocalDateTime creationTime;
@@ -87,14 +89,19 @@ public class Ticket {
     public TicketStatus getStatus() { return status; }
     public void setStatus(TicketStatus status) { this.status = status; }
 
-    public byte[] getAttachmentData() { return attachmentData; }
-    public void setAttachmentData(byte[] attachmentData) { this.attachmentData = attachmentData; }
+
+
 
     public String getAttachmentFilename() { return attachmentFilename; }
     public void setAttachmentFilename(String attachmentFilename) { this.attachmentFilename = attachmentFilename; }
 
-    public String getAttachmentContentType() { return attachmentContentType; }
-    public void setAttachmentContentType(String attachmentContentType) { this.attachmentContentType = attachmentContentType; }
+    public String getSupabaseFilename() { return supabaseFilename; }
+    public void setSupabaseFilename(String supabaseFilename) { this.supabaseFilename = supabaseFilename; }
+
+    public String getAttachmentUrl() { return attachmentUrl; }
+    public void setAttachmentUrl(String attachmentUrl) { this.attachmentUrl = attachmentUrl; }
+
+
 
     public LocalDateTime getCreationTime() { return creationTime; }
     public void setCreationTime(LocalDateTime creationTime) { this.creationTime = creationTime; }

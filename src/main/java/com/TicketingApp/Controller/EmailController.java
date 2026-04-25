@@ -164,24 +164,7 @@ public class EmailController {
         return "redirect:" + resolveRedirectPath(id, redirectTo);
     }
 
-    // Download attachment for a ticket
-    @GetMapping("/tickets/{id}/attachment")
-    public ResponseEntity<byte[]> downloadAttachment(@PathVariable Long id) {
-        Ticket ticket = ticketService.findById(id);
-        if (ticket == null || ticket.getAttachmentData() == null) {
-            return ResponseEntity.notFound().build();
-        }
-        String contentType = ticket.getAttachmentContentType() != null
-                ? ticket.getAttachmentContentType()
-                : "application/octet-stream";
-        ContentDisposition disposition = ContentDisposition.attachment()
-                .filename(ticket.getAttachmentFilename())
-                .build();
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(ticket.getAttachmentData());
-    }
+        // Download endpoint removed: attachments are now served via Supabase public URL
 
     @PostMapping("/tickets/{id}/delete")
     public String deleteTicket(@PathVariable Long id, RedirectAttributes redirectAttributes) {

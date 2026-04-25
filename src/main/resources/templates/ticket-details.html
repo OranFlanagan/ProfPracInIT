@@ -80,7 +80,7 @@
     <div class="section">
         <span class="label">Attachment:</span>
         <span th:if="${ticket.attachmentFilename != null}">
-            <a th:href="@{'/tickets/' + ${ticket.orderNum} + '/attachment'}" th:text="${ticket.attachmentFilename}">Download</a>
+            <a th:href="${ticket.attachmentUrl}" th:text="${ticket.attachmentFilename}" target="_blank">Download</a>
         </span>
         <span th:unless="${ticket.attachmentFilename != null}">None</span>
     </div>

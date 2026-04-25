@@ -1,4 +1,3 @@
-
 package com.TicketingApp.Service;
 
 import org.apache.tika.detect.DefaultDetector;
@@ -13,6 +12,7 @@ import com.TicketingApp.Entity.Ticket;
 import com.TicketingApp.Entity.TicketStatus;
 import com.TicketingApp.Repository.EmailMessageRepository;
 import com.TicketingApp.Repository.TicketRepository;
+import com.TicketingApp.Service.SupabaseStorageService;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.Collections;
 
 
-
-//Seperation of concern so logic to save ticket with repo goes here instead of controller
 @Service
 public class TicketService {
 
@@ -49,21 +47,23 @@ public class TicketService {
         ))
     );
 
-    public TicketService(TicketRepository ticketRepository, EmailMessageRepository emailMessageRepository) {
+    private final SupabaseStorageService supabaseStorageService;
+
+    public TicketService(TicketRepository ticketRepository, EmailMessageRepository emailMessageRepository, SupabaseStorageService supabaseStorageService) {
         this.ticketRepository = ticketRepository;
         this.emailMessageRepository = emailMessageRepository;
+        this.supabaseStorageService = supabaseStorageService;
     }
 
     public void createTicket(Ticket ticket) throws Exception {
         if (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) {
             String originalFilename = ticket.getAttachment().getOriginalFilename();
-            byte[] attachmentBytes = ticket.getAttachment().getBytes();
-
-            String detectedMimeType = validateAndDetectMimeType(attachmentBytes, originalFilename);
-
-            ticket.setAttachmentData(attachmentBytes);
-            ticket.setAttachmentFilename(originalFilename);
-            ticket.setAttachmentContentType(detectedMimeType);
+            // Validate file type to prevent spoofing
+            validateAndDetectMimeType(ticket.getAttachment().getBytes(), originalFilename);
+            String supabaseFileName = supabaseStorageService.uploadFile(ticket.getAttachment(), "ticket-" + System.currentTimeMillis());
+            ticket.setAttachmentFilename(originalFilename); // for display/download
+            ticket.setSupabaseFilename(supabaseFileName);   // for deletion
+            ticket.setAttachmentUrl(supabaseStorageService.getPublicUrl(supabaseFileName));
         }
         ticketRepository.save(ticket);
     }
@@ -158,6 +158,11 @@ public class TicketService {
         Ticket ticket = findById(id);
         if (ticket == null) {
             return false;
+        }
+        // Remove attachment from Supabase if it exists
+        if (ticket.getSupabaseFilename() != null && !ticket.getSupabaseFilename().isBlank()) {
+            boolean deleted = supabaseStorageService.deleteFile(ticket.getSupabaseFilename());
+            System.out.println("[TicketService] Attachment delete attempted: " + ticket.getSupabaseFilename() + ", success: " + deleted);
         }
         emailMessageRepository.deleteByTicket(ticket);
         ticketRepository.delete(ticket);
