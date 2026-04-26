@@ -6,10 +6,9 @@ import com.TicketingApp.Entity.Issue;
 import java.util.*;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface IssuesRepository extends JpaRepository<Issue, Long>{
+public interface IssuesRepository extends JpaRepository<Issue, Long> {
 
-    List<Issue> findByProductId(int product_id);
+    List<Issue> findByProduct_Id(Long id);
 
 }

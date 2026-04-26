@@ -17,8 +17,8 @@ public class IssuesService {
     @Autowired
     private IssuesRepository issuesRepository;
 
-    public List<Issue> getIssuesByProduct(int product_id) {
-        return issuesRepository.findByProductId(product_id);
+    public List<Issue> getIssuesByProduct(Long product_id) {
+        return issuesRepository.findByProduct_Id(product_id);
     }
 
 }
