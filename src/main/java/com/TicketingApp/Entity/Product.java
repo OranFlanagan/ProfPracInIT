@@ -14,11 +14,11 @@ import lombok.Data;
 @Data
 @Entity
 public class Product {
-    
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String name;
 
     private String category;
@@ -27,10 +27,10 @@ public class Product {
 
     private boolean featuredOnSupportPage;
 
-
-    // one to many relationship rule needed for list as database cannot store a list and needs to use forgein keys to know what common issue a product migh have by referencing 
-    //another table
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Issue> issues = new ArrayList<>();
 
+    // Explicit getters for environments where Lombok is not processed
+    public Long getId() { return id; }
+    public String getName() { return name; }
 }
