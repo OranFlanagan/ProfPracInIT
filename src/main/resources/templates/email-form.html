@@ -166,11 +166,39 @@
             </div>
 
             <!-- Attachment Field -->
-            <label for="attachment">Attachment (Optional):</label>
-            <input type="file" id="attachment" th:field="*{attachment}" placeholder="Choose a file to attach">
-            <div class="field-error" style="color: #666; font-size: 12px; margin-top: 3px;">
-                Max file size: 10MB
-            </div>
+
+                        <label for="attachment">Attachment (Optional):</label>
+                        <input type="file" id="attachment" th:field="*{attachment}" placeholder="Choose a file to attach" th:attr="data-max-size=${maxFileSize}">
+                        <div class="field-error" style="color: #666; font-size: 12px; margin-top: 3px;">
+                                Max file size: <span th:text="${maxFileSize}"></span>
+                        </div>
+                        <div id="file-error" class="field-error"></div>
+
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                                var fileInput = document.getElementById('attachment');
+                                var fileError = document.getElementById('file-error');
+                                var maxSizeStr = fileInput.getAttribute('data-max-size');
+                                // Convert maxSizeStr (e.g., '50MB', '100MB') to bytes
+                                function parseSize(str) {
+                                    if (!str) return 52428800; // default 50MB
+                                    str = str.trim().toUpperCase();
+                                    if (str.endsWith('MB')) return parseInt(str) * 1024 * 1024;
+                                    if (str.endsWith('KB')) return parseInt(str) * 1024;
+                                    if (str.endsWith('GB')) return parseInt(str) * 1024 * 1024 * 1024;
+                                    return parseInt(str);
+                                }
+                                var maxSize = parseSize(maxSizeStr);
+                                fileInput.addEventListener('change', function() {
+                                    if (this.files[0] && this.files[0].size > maxSize) {
+                                        fileError.innerText = 'File is too large. Max allowed is ' + maxSizeStr + '.';
+                                        this.value = '';
+                                    } else {
+                                        fileError.innerText = '';
+                                    }
+                                });
+                        });
+                        </script>
 
             <!-- Submit Button -->
             <button type="submit">Submit Ticket</button>
