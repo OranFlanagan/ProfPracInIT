@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.TicketingApp.Entity.Ticket;
+import com.TicketingApp.Service.EmailTemplateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 
@@ -22,42 +24,52 @@ public class EmailService {
     @Value("${resend.api.key}")
     private String resendApiKey;
 
-   public void sendSimpleEmail(Ticket ticket) {
-    try {
-        // Validate and resolve sender and recipient addresses
-        String resolvedFrom = resolveValidAddress(fromAddress, "no-reply@conordurcan.site");
-        String recipient = requireValidAddress(ticket.getEmail(), "recipient");
+    @Autowired
+    private EmailTemplateService emailTemplateService;
 
-        // Prepare email subject and HTML body
-        String subject = String.format("[%d] | %s | %s",
-            ticket.getOrderNum(),
-            ticket.getEmail(),
-            ticket.getName());
-        String htmlBody = String.format("<p>%s</p>", ticket.getIssueDescription());
+    public void sendSimpleEmail(Ticket ticket) {
+        try {
+            // Validate and resolve sender and recipient addresses
+            String resolvedFrom = resolveValidAddress(fromAddress, "no-reply@conordurcan.site");
+            String recipient = requireValidAddress(ticket.getEmail(), "recipient");
 
-        // Initialize Resend client with API key
-        Resend resend = new Resend(resendApiKey);
+            // Prepare email subject and HTML body
+            String subject = String.format("[%d] | %s | %s",
+                ticket.getOrderNum(),
+                ticket.getEmail(),
+                ticket.getName());
 
-        // Build the Resend email request
-        SendEmailRequest request = SendEmailRequest.builder()
-                .from(resolvedFrom)
-                .to(recipient)
-                .subject(subject)
-                .html(htmlBody)
-                .build();
+            // Get template and replace variables
+            String template = emailTemplateService.getTicketSubmittedTemplate();
+            String htmlBody = template
+                .replace("${ticket.issueDescription}", ticket.getIssueDescription())
+                .replace("${ticket.name}", ticket.getName())
+                .replace("${ticket.email}", ticket.getEmail())
+                .replace("${ticket.orderNum}", String.valueOf(ticket.getOrderNum()));
 
-        // Send the email and log the response
-        SendEmailResponse response = resend.emails().send(request);
-        logger.info("Email sent via Resend, id: {}", response.getId());
+            // Initialize Resend client with API key
+            Resend resend = new Resend(resendApiKey);
 
-    } catch (AddressException e) {
-        logger.error("Invalid email address: {}", e.getMessage());
-        throw new RuntimeException("Invalid email address: " + e.getMessage(), e);
-    } catch (Exception e) {
-        logger.error("Failed to send email via Resend: {}", e.getMessage());
-        throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
+            // Build the Resend email request
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(resolvedFrom)
+                    .to(recipient)
+                    .subject(subject)
+                    .html(htmlBody)
+                    .build();
+
+            // Send the email and log the response
+            SendEmailResponse response = resend.emails().send(request);
+            logger.info("Email sent via Resend, id: {}", response.getId());
+
+        } catch (AddressException e) {
+            logger.error("Invalid email address: {}", e.getMessage());
+            throw new RuntimeException("Invalid email address: " + e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Failed to send email via Resend: {}", e.getMessage());
+            throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
+        }
     }
-}
 
     private String resolveValidAddress(String candidate, String fallback) throws AddressException {
         if (isValidAddress(candidate)) return candidate.trim();

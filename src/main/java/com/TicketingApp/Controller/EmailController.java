@@ -92,7 +92,7 @@ public class EmailController {
             return "email-form"; 
         }
 
-        // 2. Always save to the H2 Database first
+        // 2. Always save to the Database first
         // This ensures the data is kept even if the email fails
         try {
             ticketService.createTicket(ticket);

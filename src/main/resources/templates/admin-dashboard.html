@@ -223,6 +223,17 @@
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
 
+        <!-- Edit Ticket Submission Email Template -->
+        <h2>Edit Ticket Submission Email Template</h2>
+        <form action="/admin/email-template" method="post" style="margin-bottom: 24px;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <div class="form-group">
+                <label for="templateContent">Email Template (HTML supported)</label>
+                <textarea id="templateContent" name="templateContent" rows="8" style="width:100%;padding:10px;border-radius:6px;border:1px solid #d1d5db;resize:vertical;">[[${ticketEmailTemplate}]]</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Template</button>
+        </form>
+
         <!-- Current users -->
         <h2>Current Users</h2>
         <table class="users-table">

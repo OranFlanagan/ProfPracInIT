@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.TicketingApp.Service.EmailTemplateService;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -19,10 +21,14 @@ public class AdminController {
     @Autowired
     private UserManagementService userManagementService;
 
+    @Autowired
+    private EmailTemplateService emailTemplateService;
+
     @GetMapping
     public String showAdminDashboard(Model model) {
         model.addAttribute("users", userManagementService.getAllUsers());
         model.addAttribute("roles", Roles.values());
+        model.addAttribute("ticketEmailTemplate", emailTemplateService.getTicketSubmittedTemplate());
         return "admin-dashboard";
     }
 
@@ -48,6 +54,17 @@ public class AdminController {
         userManagementService.registerUser(username, password, role);
         redirectAttributes.addFlashAttribute("successMessage",
                 "User '" + username + "' registered successfully.");
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/email-template")
+    public String updateTicketEmailTemplate(@RequestParam String templateContent, RedirectAttributes redirectAttributes) {
+        if (templateContent == null || templateContent.trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Email template cannot be empty.");
+            return "redirect:/admin";
+        }
+        emailTemplateService.updateTicketSubmittedTemplate(templateContent.trim());
+        redirectAttributes.addFlashAttribute("successMessage", "Ticket submission email template updated.");
         return "redirect:/admin";
     }
 
