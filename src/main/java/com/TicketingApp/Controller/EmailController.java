@@ -78,7 +78,13 @@ public class EmailController {
     public String showForm(Model model) {
         // We provide a blank Ticket object for the form to bind to
         model.addAttribute("ticket", new Ticket());
-        return "email-form"; 
+        // Pass max file size to the template
+        String maxFileSize = System.getenv("MAX_FILE_SIZE");
+        if (maxFileSize == null || maxFileSize.isBlank()) {
+            maxFileSize = "50MB"; // fallback default
+        }
+        model.addAttribute("maxFileSize", maxFileSize);
+        return "email-form";
     }
 
     // Handle form submission
@@ -86,6 +92,12 @@ public class EmailController {
     public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket, 
                             BindingResult result, 
                             Model model) {
+        // Always pass maxFileSize to the template
+        String maxFileSize = System.getenv("MAX_FILE_SIZE");
+        if (maxFileSize == null || maxFileSize.isBlank()) {
+            maxFileSize = "50MB";
+        }
+        model.addAttribute("maxFileSize", maxFileSize);
 
         // 1. Check for validation errors (Empty name, bad email, etc.)
         if (result.hasErrors()) {
@@ -104,22 +116,17 @@ public class EmailController {
         // 3. Attempt to send the email
         try {
             emailService.sendSimpleEmail(ticket);
-            
             String attachmentInfo = (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) 
                 ? " with attachment" 
                 : "";
-                
             model.addAttribute("successMessage", "✅ Ticket #" + ticket.getOrderNum() + 
                                " saved and sent to " + ticket.getEmail() + attachmentInfo);
-            
             // Reset the form after success
             model.addAttribute("ticket", new Ticket()); 
-            
         } catch (Exception e) {
             // If email fails, we tell the user the ticket was still saved to the DB
             model.addAttribute("errorMessage", "⚠️ Ticket saved to database, but email failed: " + e.getMessage());
         }
-
         return "email-form";
     }
 
