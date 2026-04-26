@@ -21,7 +21,7 @@
 
    
 <div th:each="product : ${products}">
-  <a th:href="@{common-issues}" class="card-link">
+  <a th:href="@{'/common-issues/' + ${product.id}}" class="card-link">
 
     <div class="product-card active">    
       
