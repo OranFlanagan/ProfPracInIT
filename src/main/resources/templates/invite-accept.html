@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accept Invite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 { color: #333; margin-bottom: 8px; font-size: 1.5rem; }
+        p.subtitle { color: #666; margin-bottom: 24px; font-size: 0.9rem; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #444; font-size: 0.9rem; }
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            margin-bottom: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:hover { background-color: #0056b3; }
+        .alert {
+            padding: 10px 14px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+        .alert-error { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        .invalid { text-align: center; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div id="validInvite" style="display:none;">
+            <h1>Set Your Password</h1>
+            <p class="subtitle">Choose a password for your account.</p>
+            <form th:action="@{/invite/accept}" method="post">
+                <input type="hidden" name="accessToken" id="accessToken"/>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <label for="password">New Password</label>
+                <input type="password" id="password" name="password" required minlength="8"
+                       placeholder="Minimum 8 characters"/>
+                <button type="submit">Activate Account</button>
+            </form>
+        </div>
+
+        <div id="invalidInvite" style="display:none;" class="invalid">
+            <h1>Link Invalid</h1>
+            <p>This invite link is missing or has expired. Please ask an admin to send a new invite.</p>
+            <p style="color:#999;font-size:0.85rem;">Redirecting to login&hellip;</p>
+        </div>
+    </div>
+
+    <script>
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get('access_token');
+        const type = params.get('type');
+
+        if (token && (type === 'invite' || type === 'recovery')) {
+            document.getElementById('accessToken').value = token;
+            document.getElementById('validInvite').style.display = 'block';
+        } else {
+            document.getElementById('invalidInvite').style.display = 'block';
+            setTimeout(() => window.location.href = '/login', 3000);
+        }
+    </script>
+</body>
+</html>

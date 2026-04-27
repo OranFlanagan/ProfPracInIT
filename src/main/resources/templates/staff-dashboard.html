@@ -134,6 +134,13 @@
     </style>
 </head>
 <body>
+    <div style="background:#1f2937;color:white;padding:10px 24px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:14px;">Signed in as <strong th:text="${loggedInEmail}"></strong></span>
+        <form th:action="@{/logout}" method="post" style="margin:0;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" style="background:#ef4444;color:white;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px;">Logout</button>
+        </form>
+    </div>
     <div class="toast-container" aria-live="polite">
         <div th:if="${deleteSuccessMessage}" class="toast toast-success" th:text="${deleteSuccessMessage}">Delete succeeded.</div>
         <div th:if="${deleteErrorMessage}" class="toast toast-error" th:text="${deleteErrorMessage}">Delete failed.</div>
@@ -174,9 +181,9 @@
                                 <select name="assignedStaff" aria-label="Assign staff">
                                     <option value="" th:selected="${ticket.assignedStaff == null}">—</option>
                                     <option th:each="staff : ${staffList}"
-                                            th:value="${staff.username}"
-                                            th:text="${staff.username}"
-                                            th:selected="${staff.username == ticket.assignedStaff}"></option>
+                                    th:value="${staff.email}"
+                                     th:text="${staff.email}"
+                                     th:selected="${staff.email == ticket.assignedStaff}"></option>
                                 </select>
                                 <button type="submit">Assign</button>
                             </form>

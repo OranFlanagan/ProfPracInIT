@@ -52,9 +52,9 @@
             <select name="assignedStaff" aria-label="Assign staff">
                 <option value="" th:selected="${ticket.assignedStaff == null}">—</option>
                 <option th:each="staff : ${staffList}"
-                        th:value="${staff.username}"
-                        th:text="${staff.username}"
-                        th:selected="${staff.username == ticket.assignedStaff}"></option>
+                        th:value="${staff.email}"
+                        th:text="${staff.email}"
+                        th:selected="${staff.email == ticket.assignedStaff}"></option>
             </select>
             <button type="submit">Assign</button>
         </form>

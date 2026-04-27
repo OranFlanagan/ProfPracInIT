@@ -144,14 +144,14 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
-        public Ticket updateAssignedStaff(Long id, String staffUsername) {
-        Ticket ticket = findById(id);
-        if (ticket == null) {
-            return null;
+        public Ticket updateAssignedStaff(Long id, String staffEmail) {
+            Ticket ticket = findById(id);
+            if (ticket == null) {
+                return null;
+            }
+            ticket.setAssignedStaff(staffEmail);
+            return ticketRepository.save(ticket);
         }
-        ticket.setAssignedStaff(staffUsername);
-        return ticketRepository.save(ticket);
-    }
 
     @org.springframework.transaction.annotation.Transactional
     public boolean deleteTicket(Long id) {

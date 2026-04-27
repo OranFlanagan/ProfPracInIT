@@ -178,7 +178,7 @@
             .users-table td { border: none; padding: 6px 0; }
             .users-table td::before { font-weight: 600; display: block; color: #374151; font-size: 12px; }
             .users-table td.col-id::before { content: "ID"; }
-            .users-table td.col-username::before { content: "Username"; }
+            .users-table td.col-email::before { content: "Email"; }
             .users-table td.col-role::before { content: "Role"; }
             .users-table td.col-actions::before { content: "Actions"; }
             .actions-cell { flex-direction: column; align-items: flex-start; }
@@ -186,6 +186,13 @@
     </style>
 </head>
 <body>
+    <div style="background:#1f2937;color:white;padding:10px 24px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:14px;">Signed in as <strong th:text="${loggedInEmail}"></strong></span>
+        <form th:action="@{/logout}" method="post" style="margin:0;">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+            <button type="submit" style="background:#ef4444;color:white;border:none;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px;">Logout</button>
+        </form>
+    </div>
     <div class="toast-container" aria-live="polite">
         <div th:if="${deleteSuccessMessage}" class="toast toast-success" th:text="${deleteSuccessMessage}">Delete succeeded.</div>
         <div th:if="${deleteErrorMessage}" class="toast toast-error" th:text="${deleteErrorMessage}">Delete failed.</div>
@@ -207,12 +214,8 @@
         <form class="register-form" action="/admin/staff" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required placeholder="Enter username">
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="Enter password">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="Enter email">
             </div>
             <div class="form-group">
                 <label for="role">Role</label>
@@ -220,7 +223,7 @@
                     <option th:each="r : ${roles}" th:value="${r}" th:text="${r.name()}">ROLE_STAFF</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary">Invite User</button>
         </form>
 
         <!-- Edit Ticket Submission Email Template -->
@@ -240,7 +243,7 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Username</th>
+                    <th>Email</th>
                     <th>Role</th>
                     <th>Actions</th>
                 </tr>
@@ -251,17 +254,16 @@
                 </tr>
                 <tr th:each="user : ${users}">
                     <td class="col-id" th:text="${user.id}">1</td>
-                    <td class="col-username" th:text="${user.username}">admin</td>
+                    <td class="col-email" th:text="${user.email}">admin</td>
                     <td class="col-role">
                         <span class="role-badge" th:classappend="${user.role}" th:text="${user.role}">ROLE_STAFF</span>
                     </td>
                     <td class="col-actions">
                         <div class="actions-cell">
-                            <!-- Reset password -->
-                            <form th:action="@{'/admin/staff/' + ${user.id} + '/reset-password'}" method="post">
+                            <!-- Reset password (send reset email) -->
+                            <form th:action="@{'/admin/staff/' + ${user.email} + '/reset-password'}" method="post">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <input type="password" name="newPassword" required placeholder="New password">
-                                <button type="submit" class="btn btn-warning">Reset</button>
+                                <button type="submit" class="btn btn-warning">Send Reset Email</button>
                             </form>
                             <!-- Delete user -->
                             <form th:action="@{'/admin/staff/' + ${user.id} + '/delete'}" method="post"

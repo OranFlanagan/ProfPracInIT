@@ -10,30 +10,7 @@ import java.io.IOException;
 
 @Service
 public class SupabaseStorageService {
-        /**
-         * Removes an attachment from the Supabase bucket by filename.
-         * @param fileName The name of the file to remove (e.g., ticket-..._filename.ext)
-         * @return true if deleted successfully, false otherwise
-         */
-        public boolean deleteFile(String fileName) {
-            String url = SUPABASE_URL + "/storage/v1/object/" + BUCKET + "/" + fileName;
-            System.out.println("[SupabaseStorageService] Deleting file: " + fileName);
-            System.out.println("[SupabaseStorageService] DELETE URL: " + url);
-
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(SUPABASE_KEY);
-
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-            try {
-                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
-                System.out.println("[SupabaseStorageService] Delete response status: " + response.getStatusCode());
-                return response.getStatusCode().is2xxSuccessful();
-            } catch (Exception e) {
-                System.out.println("[SupabaseStorageService] Exception during delete: " + e.getMessage());
-                return false;
-            }
-        }
+       
     @Value("${supabase.url}")
     private String SUPABASE_URL;
 
@@ -85,4 +62,29 @@ public class SupabaseStorageService {
     public String getPublicUrl(String fileName) {
         return SUPABASE_URL + "/storage/v1/object/public/" + BUCKET + "/" + fileName;
     }
+
+     /**
+         * Removes an attachment from the Supabase bucket by filename.
+         * @param fileName The name of the file to remove (e.g., ticket-..._filename.ext)
+         * @return true if deleted successfully, false otherwise
+         */
+        public boolean deleteFile(String fileName) {
+            String url = SUPABASE_URL + "/storage/v1/object/" + BUCKET + "/" + fileName;
+            System.out.println("[SupabaseStorageService] Deleting file: " + fileName);
+            System.out.println("[SupabaseStorageService] DELETE URL: " + url);
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(SUPABASE_KEY);
+
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+                System.out.println("[SupabaseStorageService] Delete response status: " + response.getStatusCode());
+                return response.getStatusCode().is2xxSuccessful();
+            } catch (Exception e) {
+                System.out.println("[SupabaseStorageService] Exception during delete: " + e.getMessage());
+                return false;
+            }
+        }
 }
