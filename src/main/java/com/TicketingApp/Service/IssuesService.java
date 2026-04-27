@@ -1,7 +1,6 @@
 package com.TicketingApp.Service;
 
 
-import com.TicketingApp.Repository.UserRepository;
 import com.TicketingApp.Entity.Issue;
 import com.TicketingApp.Repository.IssuesRepository;
 

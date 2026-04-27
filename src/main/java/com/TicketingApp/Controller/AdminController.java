@@ -1,7 +1,8 @@
 package com.TicketingApp.Controller;
 
-import com.TicketingApp.Entity.Users.Roles;
+import com.TicketingApp.Entity.UserVariable;
 import com.TicketingApp.Service.UserManagementService;
+import com.TicketingApp.Service.SupabaseAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.TicketingApp.Service.EmailTemplateService;
+import org.springframework.security.core.Authentication;
 
 @Controller
 @RequestMapping("/admin")
@@ -24,36 +26,40 @@ public class AdminController {
     @Autowired
     private EmailTemplateService emailTemplateService;
 
+    @Autowired
+    private SupabaseAdminService supabaseAdminService;
+
     @GetMapping
-    public String showAdminDashboard(Model model) {
+    public String showAdminDashboard(Model model, Authentication authentication) {
         model.addAttribute("users", userManagementService.getAllUsers());
-        model.addAttribute("roles", Roles.values());
+        model.addAttribute("roles", UserVariable.Role.values());
         model.addAttribute("ticketEmailTemplate", emailTemplateService.getTicketSubmittedTemplate());
+        model.addAttribute("loggedInEmail", authentication != null ? authentication.getName() : "");
         return "admin-dashboard";
     }
 
     @PostMapping("/staff")
-    public String registerStaff(@RequestParam String username,
-                                @RequestParam String password,
-                                @RequestParam Roles role,
+    public String registerStaff(@RequestParam String email,
+                                @RequestParam UserVariable.Role role,
                                 RedirectAttributes redirectAttributes) {
-        if (username == null || username.isBlank()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Username is required.");
+        if (email == null || email.isBlank()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Email is required.");
             return "redirect:/admin";
         }
-        if (password == null || password.isBlank()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Password is required.");
-            return "redirect:/admin";
+        String inviteError = supabaseAdminService.inviteUser(email);
+        if (inviteError == null) {
+            try {
+                userManagementService.registerUser(email, role);
+                redirectAttributes.addFlashAttribute("successMessage",
+                    "User '" + email + "' invited successfully. They must check their email to set a password.");
+            } catch (Exception e) {
+                supabaseAdminService.deleteUser(email);
+                redirectAttributes.addFlashAttribute("errorMessage",
+                    "Failed to save user record. Please try again.");
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", inviteError);
         }
-        if (userManagementService.usernameExists(username)) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Username '" + username + "' is already taken.");
-            return "redirect:/admin";
-        }
-
-        userManagementService.registerUser(username, password, role);
-        redirectAttributes.addFlashAttribute("successMessage",
-                "User '" + username + "' registered successfully.");
         return "redirect:/admin";
     }
 
@@ -68,19 +74,13 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @PostMapping("/staff/{id}/reset-password")
-    public String resetPassword(@PathVariable Long id,
-                                @RequestParam String newPassword,
-                                RedirectAttributes redirectAttributes) {
-        if (newPassword == null || newPassword.isBlank()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "New password is required.");
-            return "redirect:/admin";
-        }
-        boolean success = userManagementService.resetPassword(id, newPassword);
+    @PostMapping("/staff/{email}/reset-password")
+    public String resetPassword(@PathVariable String email, RedirectAttributes redirectAttributes) {
+        boolean success = supabaseAdminService.sendPasswordReset(email);
         if (success) {
-            redirectAttributes.addFlashAttribute("successMessage", "Password reset successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Password reset email sent to '" + email + "'.");
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to send password reset email. User may not exist.");
         }
         return "redirect:/admin";
     }
@@ -88,13 +88,20 @@ public class AdminController {
     @PostMapping("/staff/{id}/delete")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            boolean success = userManagementService.deleteUser(id);
-            if (success) {
-                redirectAttributes.addFlashAttribute("deleteSuccessMessage", "User deleted successfully.");
-            } else {
+            UserVariable user = userManagementService.findById(id);
+            if (user == null) {
                 redirectAttributes.addFlashAttribute("deleteErrorMessage",
                         "User could not be deleted because it no longer exists.");
+                return "redirect:/admin";
             }
+            boolean supabaseDeleted = supabaseAdminService.deleteUser(user.getEmail());
+            if (!supabaseDeleted) {
+                redirectAttributes.addFlashAttribute("deleteErrorMessage",
+                        "Failed to delete user from authentication system. Please try again.");
+                return "redirect:/admin";
+            }
+            userManagementService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("deleteSuccessMessage", "User deleted successfully.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("deleteErrorMessage",
                     "User could not be deleted. Please try again.");

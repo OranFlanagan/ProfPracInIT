@@ -70,6 +70,7 @@ public class EmailController {
         boolean isAdmin = authentication != null &&
                 authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
         model.addAttribute("isAdmin", isAdmin);
+        model.addAttribute("loggedInEmail", authentication != null ? authentication.getName() : "");
         return "staff-dashboard";
     }
 
@@ -149,9 +150,9 @@ public class EmailController {
     @PostMapping("/tickets/{id}/assign")
     public String updateAssignedStaff(
             @PathVariable Long id,
-            @RequestParam("assignedStaff") String staffUsername,
+            @RequestParam("assignedStaff") String staffEmail,
             @RequestParam(value = "redirectTo", required = false) String redirectTo) {
-        Ticket ticket = ticketService.updateAssignedStaff(id, staffUsername);
+        Ticket ticket = ticketService.updateAssignedStaff(id, staffEmail);
         if (ticket == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
         }
