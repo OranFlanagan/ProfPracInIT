@@ -1,172 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+ 
 :root {
-    --bg: #f5f2eb;
-    --surface: #ffffff;
-    --border: #1a1a1a;
-    --accent: #d94f3d;
-    --text: #1a1a1a;
-    --muted: #6b6b6b;
-    --grid-gap: 12px;
-    --card-size: 140px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'IBM Plex Mono', monospace;
-    align-items: center;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 32px;
-  }
-
-  .header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid var(--border);
-  }
-
-  .logo {
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: -1px;
-    line-height: 1;
-  }
-
-  .logo span { color: var(--accent); }
-
-  .section-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--muted);
-    margin-bottom: 16px;
-  }
-
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(3, var(--card-size));
-    gap: var(--grid-gap);
-  }
-
-  .product-card {
-    width: var(--card-size);
-    height: var(--card-size);
-    border: 2px solid var(--border);
-    background: var(--surface);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .product-card.active {
-    border-color: var(--accent);
-    background: #fff8f7;
-  }
-
-  .product-card.active::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: var(--accent);
-  }
-
-  .card-id {
-    font-size: 0.6rem;
-    color: var(--muted);
-    font-weight: 500;
-    letter-spacing: 1px;
-  }
-
-  .card-name {
-    font-size: 0.7rem;
-    font-weight: 600;
-    margin-top: 2px;
-    line-height: 1.3;
-  }
-
-  .card-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 0.55rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 2px 5px;
-    background: var(--accent);
-    color: white;
-  }
-
-  .card-link {
+  --bg: #f0ede6;
+  --surface: #ffffff;
+  --surface-hover: #fafaf9;
+  --border: rgba(26, 26, 26, 0.12);
+  --border-strong: rgba(26, 26, 26, 0.25);
+  --accent: #1D9E75;
+  --accent-light: #e1f5ee;
+  --accent-dark: #085041;
+  --accent-red: #d94f3d;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --card-radius: 14px;
+  --grid-gap: 10px;
+}
+ 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+body {
+  font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 32px;
+}
+ 
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-strong);
+}
+ 
+.logo {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+ 
+.logo span { color: var(--accent); }
+ 
+.header-sub {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+ 
+/* ── Search ── */
+.search-wrap {
+  margin-bottom: 20px;
+}
+ 
+.search-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 10px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+ 
+.search-input::placeholder { color: var(--muted); }
+.search-input:focus { border-color: var(--accent); }
+ 
+/* ── Section label ── */
+.section-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+ 
+/* ── Grid ── */
+.grid-wrap {
+  padding-bottom: 100px;
+}
+ 
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: var(--grid-gap);
+}
+ 
+/* ── Card ── */
+.product-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  padding: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+}
+ 
+.product-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+}
+ 
+.product-card.active {
+  border-color: var(--accent);
+  border-width: 1.5px;
+}
+ 
+.product-card.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 14px 14px 0 0;
+}
+ 
+/* ── Card internals ── */
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+ 
+.card-id {
+  font-size: 0.6rem;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+ 
+.card-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: var(--accent-light);
+  color: var(--accent-dark);
+}
+ 
+.card-badge.closed {
+  background: #f0ede6;
+  color: var(--muted);
+}
+ 
+.card-image-wrap {
+  width: 100%;
+  height: 80px;
+  background: var(--bg);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ 
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+ 
+.card-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text);
+}
+ 
+/* ── Card link ── */
+.card-link {
   text-decoration: none;
   color: inherit;
   display: block;
-  }
-
-
-
-  .statusbar {
-    margin-top: 32px;
-    display: flex;
-    gap: 24px;
-    padding: 12px 0;
-    border-top: 1px solid #ccc;
-    font-size: 0.65rem;
-    color: var(--muted);
-  }
-
-  .card-image {
-    width: 100%;
-    height: 150px;   
-    object-fit: cover;
-    border-radius: 6px;
 }
-
-
+ 
+/* ── Button ── */
 .cant-find-button {
   position: fixed;
   bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10;
 }
-
+ 
 .cant-find-button button {
-  background: #1D9E75;
+  background: var(--accent);
   color: #fff;
   border: none;
-  padding: 14px 28px;
+  padding: 13px 28px;
   border-radius: 50px;
-  font-size: 15px;
-  font-weight: 500;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
   cursor: pointer;
-  letter-spacing: 0.01em;
-  box-shadow: 0 4px 18px rgba(29, 158, 117, 0.28);
-  transition: background 0.18s, transform 0.13s, box-shadow 0.18s;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 20px rgba(29, 158, 117, 0.30);
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
   white-space: nowrap;
 }
-
+ 
 .cant-find-button button:hover {
   background: #0F6E56;
   transform: translateY(-2px);
-  box-shadow: 0 7px 24px rgba(29, 158, 117, 0.36);
+  box-shadow: 0 7px 26px rgba(29, 158, 117, 0.38);
 }
-
+ 
 .cant-find-button button:active {
   transform: scale(0.97);
 }
-
-
-
-
-
-  .statusbar span strong { color: var(--text); }

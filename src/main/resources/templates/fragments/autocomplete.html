@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+  <th:block th:fragment="suggestions">
+    <li th:each="product : ${suggestions}"
+        class="autocomplete-item"
+        th:attr="onclick='selectSuggestion(' + '&quot;' + ${product.name} + '&quot;' + ')'">
+      <span class="autocomplete-name" th:text="${product.name}"></span>
+    </li>
+  </th:block>
+
+  <th:block th:fragment="empty"></th:block>
+
+</body>
+</html>
