@@ -1,90 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Log</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/styles/product-log.css}">
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Log</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/styles/product-log.css}">
+  <link rel="stylesheet" th:href="@{/styles/search.css}">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
 
 <body>
 
-<header class="header">
-  <div class="logo">Product<span>Log</span></div>
-</header>
+  <header class="header">
+    <div class="logo">Product<span>Log</span></div>
+    <div class="header-sub">Support portal</div>
+  </header>
 
-<div class="section-label">Products — Select to view ticket</div>
-<div class="grid-wrap">
-  <div class="product-grid">
+  <div class="grid-wrap">
 
-   
-<div th:each="product : ${products}">
-<a th:href="@{/common-issues/{id}(id=${product.id})}" class="card-link">
+    <div class="search-wrapper"
+         hx-get="/support-page/search"
+         hx-trigger="keyup from:#search-input delay:300ms"
+         hx-target="#product-grid"
+         hx-swap="innerHTML"
+         hx-include="#search-input">
 
-    <div class="product-card active">    
-      
-      <div class="card-badge">open</div>
-      
-      <div class="card-id" 
-           th:text="'#' + ${product.id}"></div>
-      
-      <div class="card-name" 
-           th:text="${product.name}"></div>
+      <input id="search-input"
+             class="search-input"
+             type="text"
+             name="search"
+             placeholder="Search products..."
+             autocomplete="off"
+             th:value="${search}"
+             hx-get="/support-page/autocomplete"
+             hx-trigger="keyup changed delay:220ms"
+             hx-target="#autocomplete-list"
+             hx-swap="innerHTML">
 
-      <img th:src="${product.urlString}" 
-           alt="Product Image" 
-           class="card-image">
-    </div>
-  </a>
-</div>
+      <ul id="autocomplete-list" class="autocomplete-list"></ul>
 
-    <div class="product-card">
-      <div class="card-id">#002</div>
-      <div class="card-name">Placeholder</div>
     </div>
 
-    <div class="product-card">
-      <div class="card-id">#003</div>
-      <div class="card-name">Placeholder</div>
+    <div class="section-label">Products — Select to view ticket</div>
+
+    <div class="product-grid" id="product-grid">
+
+      <div th:each="product : ${products}">
+        <a th:href="@{/common-issues/{id}(id=${product.id})}" class="card-link">
+          <div class="product-card active">
+
+            <div class="card-top">
+              <div class="card-id" th:text="'#' + ${product.id}"></div>
+              <div class="card-badge">open</div>
+            </div>
+
+            <div class="card-image-wrap">
+              <img th:src="${product.urlString}" alt="Product Image" class="card-image">
+            </div>
+
+            <div class="card-name" th:text="${product.name}"></div>
+
+          </div>
+        </a>
+      </div>
+
     </div>
 
-    <div class="product-card">
-      <div class="card-id">#004</div>
-      <div class="card-name">Placeholder</div>
+    <div class="cant-find-button">
+      <button onclick="window.location.href='/email-form'">Can't find the product?</button>
     </div>
 
-    <div class="product-card">
-      <div class="card-id">#005</div>
-      <div class="card-name">Placeholder</div>
-    </div>
-
-    <div class="product-card">
-      <div class="card-id">#006</div>
-      <div class="card-name">Placeholder</div>
-    </div>
-
-    <div class="product-card">
-      <div class="card-id">#007</div>
-      <div class="card-name">Placeholder</div>
-    </div>
-    <div class="product-card">
-      <div class="card-id">#008</div>
-      <div class="card-name">Placeholder</div>
-    </div>
-
-    <div class="product-card">
-      <div class="card-id">#009</div>
-      <div class="card-name">Placeholder</div>
-    </div>
-</div>
-
-<div class="button">
-<div class ="cant-find-button"> <button onclick="window.location.href='/email-form'">Can't find the product?</button>
   </div>
-</div>
 
-</div>
+  <script>
+    function selectSuggestion(name) {
+      const input = document.getElementById('search-input');
+      const list  = document.getElementById('autocomplete-list');
+
+      input.value = name;
+      list.innerHTML = '';
+
+      htmx.ajax('GET', '/support-page/search?search=' + encodeURIComponent(name), {
+        target: '#product-grid',
+        swap: 'innerHTML'
+      });
+    }
+
+
+let selectedIndex = -1;
+
+document.getElementById('search-input').addEventListener('keydown', function(e) {
+  const items = document.querySelectorAll('#autocomplete-list .autocomplete-item');
+  if (!items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    selectedIndex = Math.max(selectedIndex - 1, -1);
+  } else if (e.key === 'Enter' && selectedIndex >= 0) {
+    e.preventDefault();
+    items[selectedIndex].click();
+    selectedIndex = -1;
+    return;
+  } else if (e.key === 'Escape') {
+    document.getElementById('autocomplete-list').innerHTML = '';
+    selectedIndex = -1;
+    return;
+  } else {
+    selectedIndex = -1;
+  }
+
+  items.forEach(item => item.classList.remove('autocomplete-highlighted'));
+  if (selectedIndex >= 0) items[selectedIndex].classList.add('autocomplete-highlighted');
+});
+
+
+  </script>
+
 </body>
 </html>

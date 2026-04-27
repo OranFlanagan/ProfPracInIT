@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <th:block th:fragment="cards">
+    <div th:each="product : ${products}">
+      <a th:href="@{/common-issues/{id}(id=${product.id})}" class="card-link">
+        <div class="product-card active">
+          <div class="card-top">
+            <div class="card-id" th:text="'#' + ${product.id}"></div>
+            <div class="card-badge">open</div>
+          </div>
+          <div class="card-image-wrap">
+            <img th:src="${product.urlString}" alt="Product Image" class="card-image">
+          </div>
+          <div class="card-name" th:text="${product.name}"></div>
+        </div>
+      </a>
+    </div>
+  </th:block>
+</body>
+</html>

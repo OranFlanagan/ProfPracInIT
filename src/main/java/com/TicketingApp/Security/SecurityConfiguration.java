@@ -19,6 +19,9 @@ public class SecurityConfiguration {
             .requestMatchers("/common-issues.css/**").permitAll()
             .requestMatchers("/product-log.css/**").permitAll()
             .requestMatchers("/styles/**", "/css/**", "/js/**", "/images/**").permitAll()
+            .requestMatchers("/product-cards.html").permitAll()
+            .requestMatchers("/autocomplete.html").permitAll()
+            .requestMatchers("/suggestion-result.html").permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         ).formLogin(Customizer.withDefaults());
