@@ -1,5 +1,4 @@
 package com.TicketingApp.Entity;
-import com.TicketingApp.Entity.Issue;
 
 import java.util.*;
 import jakarta.persistence.CascadeType;
@@ -30,7 +29,5 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Issue> issues = new ArrayList<>();
 
-    // Explicit getters for environments where Lombok is not processed
-    public Long getId() { return id; }
-    public String getName() { return name; }
+
 }

@@ -87,6 +87,19 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    @PostMapping("/staff/{id}/role")
+    public String updateUserRole(@PathVariable Long id,
+                                 @RequestParam UserVariable.Role role,
+                                 RedirectAttributes redirectAttributes) {
+        boolean updated = userManagementService.updateUserRole(id, role);
+        if (updated) {
+            redirectAttributes.addFlashAttribute("successMessage", "User role updated successfully.");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
+        }
+        return "redirect:/admin";
+    }
+
     @PostMapping("/staff/{id}/delete")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {

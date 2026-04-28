@@ -22,10 +22,6 @@ public class UserManagementService {
         return userVariableRepository.findById(id).orElse(null);
     }
 
-    public boolean emailExists(String email) {
-        return userVariableRepository.existsByEmail(email);
-    }
-
     public UserVariable registerUser(String email, Role role) {
         UserVariable existing = userVariableRepository.findByEmail(email);
         if (existing != null) {
@@ -36,6 +32,14 @@ public class UserManagementService {
         user.setEmail(email);
         user.setRole(role);
         return userVariableRepository.save(user);
+    }
+
+    public boolean updateUserRole(Long id, Role role) {
+        UserVariable user = userVariableRepository.findById(id).orElse(null);
+        if (user == null) return false;
+        user.setRole(role);
+        userVariableRepository.save(user);
+        return true;
     }
 
     public boolean deleteUser(Long id) {

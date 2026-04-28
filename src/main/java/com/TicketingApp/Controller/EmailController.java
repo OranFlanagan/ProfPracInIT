@@ -1,27 +1,20 @@
 package com.TicketingApp.Controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.TicketingApp.Entity.EmailMessage;
 import com.TicketingApp.Entity.Ticket;
 import com.TicketingApp.Entity.TicketStatus;
-import com.TicketingApp.Repository.EmailMessageRepository;
 import com.TicketingApp.Service.EmailService;
 
 import com.TicketingApp.Service.TicketService;
@@ -39,9 +32,6 @@ public class EmailController {
     private final EmailService emailService;
     private final TicketService ticketService;
     private final UserManagementService userManagementService;
-
-    @Autowired
-    private EmailMessageRepository emailMessageRepository;
 
     public EmailController(EmailService emailService, TicketService ticketService, UserManagementService userManagementService) {
         this.emailService = emailService;
@@ -62,8 +52,18 @@ public class EmailController {
 
     // Show staff dashboard
     @GetMapping("/staff-dashboard")
-    public String showStaffDashboard(Model model, Authentication authentication) {
-        model.addAttribute("tickets", ticketService.getAllTickets());
+    public String showStaffDashboard(Model model, Authentication authentication,
+                                     @RequestParam(defaultValue = "") String sort) {
+        List<Ticket> tickets;
+        if ("oldest".equals(sort)) {
+            tickets = ticketService.getAllTicketsSorted(true);
+        } else if ("newest".equals(sort)) {
+            tickets = ticketService.getAllTicketsSorted(false);
+        } else {
+            tickets = ticketService.getAllTickets();
+        }
+        model.addAttribute("tickets", tickets);
+        model.addAttribute("sort", sort);
         model.addAttribute("ticketStatuses", TicketStatus.values());
         model.addAttribute("staffList", userManagementService.getAllUsers().stream()
             .filter(u -> u.getRole() != null && (u.getRole().name().equals("ROLE_STAFF") || u.getRole().name().equals("ROLE_ADMIN")))
@@ -139,13 +139,11 @@ public class EmailController {
         if (ticket == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
         }
-        List<EmailMessage> thread = emailMessageRepository.findByTicketOrderByTimestampAsc(ticket);
         model.addAttribute("ticket", ticket);
         model.addAttribute("ticketStatuses", TicketStatus.values());
         model.addAttribute("staffList", userManagementService.getAllUsers().stream()
             .filter(u -> u.getRole() != null && (u.getRole().name().equals("ROLE_STAFF") || u.getRole().name().equals("ROLE_ADMIN")))
             .toList());
-        model.addAttribute("thread", thread);
         return "ticket-details";
     }
     @PreAuthorize("hasAnyAuthority('ROLE_STAFF', 'ROLE_ADMIN')")
@@ -176,6 +174,20 @@ public class EmailController {
     }
 
         // Download endpoint removed: attachments are now served via Supabase public URL
+
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF', 'ROLE_ADMIN')")
+    @PostMapping("/tickets/{id}/internal-notes")
+    public String updateInternalNotes(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "") String internalNotes,
+            RedirectAttributes redirectAttributes) {
+        Ticket ticket = ticketService.updateInternalNotes(id, internalNotes);
+        if (ticket == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
+        }
+        redirectAttributes.addFlashAttribute("successMessage", "Internal notes saved.");
+        return "redirect:/tickets/" + id;
+    }
 
     @PostMapping("/tickets/{id}/delete")
     public String deleteTicket(@PathVariable Long id, RedirectAttributes redirectAttributes) {

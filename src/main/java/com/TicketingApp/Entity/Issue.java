@@ -1,5 +1,4 @@
 package com.TicketingApp.Entity;
-import com.TicketingApp.Entity.*;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

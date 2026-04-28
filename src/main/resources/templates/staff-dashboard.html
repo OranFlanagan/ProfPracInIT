@@ -116,6 +116,17 @@
         }
 
         .no-tickets { padding: 20px; color:#6b7280; }
+        .sort-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            background: white;
+            color: #374151;
+        }
+        .sort-btn-active { background: #2563eb; color: white; border-color: #2563eb; }
         @media (max-width: 800px) {
             .tickets-table thead { display: none; }
             .tickets-table, .tickets-table tbody, .tickets-table tr, .tickets-table td { display: block; width: 100%; }
@@ -155,6 +166,12 @@
 
            <div th:if="${isAdmin}" style="margin-bottom: 20px;">
             <a href="/admin-deflection-editor" style="display:inline-block;padding:10px 20px;background:#2563eb;color:white;border-radius:6px;text-decoration:none;font-weight:600;">Admin deflection screen</a>
+        </div>
+
+        <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center;">
+            <span style="font-size:14px;font-weight:600;color:#374151;">Sort by date:</span>
+            <a th:href="@{/staff-dashboard(sort='newest')}" class="sort-btn" th:classappend="${sort == 'newest'} ? ' sort-btn-active' : ''">Newest First</a>
+            <a th:href="@{/staff-dashboard(sort='oldest')}" class="sort-btn" th:classappend="${sort == 'oldest'} ? ' sort-btn-active' : ''">Oldest First</a>
         </div>
 
         <div>

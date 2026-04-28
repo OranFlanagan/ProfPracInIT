@@ -12,7 +12,6 @@ import com.TicketingApp.Entity.Ticket;
 import com.TicketingApp.Entity.TicketStatus;
 import com.TicketingApp.Repository.EmailMessageRepository;
 import com.TicketingApp.Repository.TicketRepository;
-import com.TicketingApp.Service.SupabaseStorageService;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -72,7 +71,7 @@ public class TicketService {
 
     // Return all tickets for display on the staff dashboard
     public List<Ticket> getAllTickets() {
-        return ticketRepository.findAll();
+        return ticketRepository.findAll(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "orderNum"));
     }
 
     /**
@@ -154,6 +153,13 @@ public class TicketService {
             ticket.setAssignedStaff(staffEmail);
             return ticketRepository.save(ticket);
         }
+
+    public Ticket updateInternalNotes(Long id, String notes) {
+        Ticket ticket = findById(id);
+        if (ticket == null) return null;
+        ticket.setInternalNotes(notes);
+        return ticketRepository.save(ticket);
+    }
 
     @org.springframework.transaction.annotation.Transactional
     public boolean deleteTicket(Long id) {

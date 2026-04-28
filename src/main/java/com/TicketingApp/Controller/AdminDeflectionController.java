@@ -12,7 +12,6 @@ import com.TicketingApp.Repository.IssueFixRepository;
 import com.TicketingApp.Entity.Product;
 import com.TicketingApp.Entity.Issue;
 import com.TicketingApp.Entity.IssueFix;
-import jakarta.transaction.Transactional;
 import java.util.*;
 
 @Controller

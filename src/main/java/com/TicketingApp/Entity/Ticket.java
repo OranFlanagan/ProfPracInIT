@@ -51,8 +51,6 @@ public class Ticket {
 
     private String attachmentFilename;
 
-    // Not persisted: used to expose the public URL
-    @Transient
     private String attachmentUrl;
 
     private String supabaseFilename;
@@ -61,6 +59,9 @@ public class Ticket {
     private LocalDateTime creationTime;
 
     private String assignedStaff;
+
+    @Column(columnDefinition = "TEXT")
+    private String internalNotes;
 
     public Long getOrderNum() { return orderNum; }
     public void setOrderNum(Long orderNum) { this.orderNum = orderNum; }
@@ -108,6 +109,9 @@ public class Ticket {
 
     public String getAssignedStaff() { return assignedStaff; }
     public void setAssignedStaff(String assignedStaff) { this.assignedStaff = assignedStaff; }
+
+    public String getInternalNotes() { return internalNotes; }
+    public void setInternalNotes(String internalNotes) { this.internalNotes = internalNotes; }
 
     @jakarta.persistence.PrePersist
     protected void onCreate() {
