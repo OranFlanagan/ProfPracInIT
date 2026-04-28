@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class SupabaseStorageService {
@@ -22,7 +23,7 @@ public class SupabaseStorageService {
 
 
     public String uploadFile(MultipartFile file, String ticketId) throws IOException {
-        String fileName = ticketId + "_" + file.getOriginalFilename();
+        String fileName = ticketId + "_" + file.getOriginalFilename().replace(" ", "_");
         String url = SUPABASE_URL + "/storage/v1/object/" + BUCKET + "/" + fileName;
 
         RestTemplate restTemplate = new RestTemplate();
@@ -47,8 +48,19 @@ public class SupabaseStorageService {
         }
     }
 
-    public String getPublicUrl(String fileName) {
-        return SUPABASE_URL + "/storage/v1/object/public/" + BUCKET + "/" + fileName;
+    public String getSignedUrl(String fileName) {
+        String url = SUPABASE_URL + "/storage/v1/object/sign/" + BUCKET + "/" + fileName;
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(SUPABASE_KEY);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>("{\"expiresIn\": 3600}", headers);
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                url, HttpMethod.POST, entity, new org.springframework.core.ParameterizedTypeReference<>() {});
+        String signedPath = (String) response.getBody().get("signedURL");
+        return SUPABASE_URL + "/storage/v1" + signedPath;
     }
 
     public boolean deleteFile(String fileName) {

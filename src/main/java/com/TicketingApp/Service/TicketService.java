@@ -34,6 +34,11 @@ public class TicketService {
         Map.entry("png", Set.of("image/png")),
         Map.entry("jpg", Set.of("image/jpeg")),
         Map.entry("jpeg", Set.of("image/jpeg")),
+        Map.entry("gif", Set.of("image/gif")),
+        Map.entry("webp", Set.of("image/webp")),
+        Map.entry("mp4", Set.of("video/mp4")),
+        Map.entry("txt", Set.of("text/plain")),
+        Map.entry("csv", Set.of("text/csv", "application/csv")),
         Map.entry("doc", Set.of("application/msword")),
         Map.entry("docx", Set.of("application/vnd.openxmlformats-officedocument.wordprocessingml.document")),
         Map.entry("xlsx", Set.of("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
@@ -64,7 +69,6 @@ public class TicketService {
             String supabaseFileName = supabaseStorageService.uploadFile(ticket.getAttachment(), "ticket-" + System.currentTimeMillis());
             ticket.setAttachmentFilename(originalFilename); // for display/download
             ticket.setSupabaseFilename(supabaseFileName);   // for deletion
-            ticket.setAttachmentUrl(supabaseStorageService.getPublicUrl(supabaseFileName));
         }
         ticketRepository.save(ticket);
     }

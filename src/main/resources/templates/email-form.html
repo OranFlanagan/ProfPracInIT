@@ -169,7 +169,7 @@
             <!-- Attachment Field -->
 
                         <label for="attachment">Attachment (Optional):</label>
-                        <input type="file" id="attachment" th:field="*{attachment}" placeholder="Choose a file to attach" th:attr="data-max-size=${maxFileSize}">
+                        <input type="file" id="attachment" th:field="*{attachment}" placeholder="Choose a file to attach" th:attr="data-max-size=${maxFileSize}" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4,.txt,.csv,.doc,.docx,.xlsx,.odt,.ods">
                         <div class="field-error" style="color: #666; font-size: 12px; margin-top: 3px;">
                                 Max file size: <span th:text="${maxFileSize}"></span>
                         </div>

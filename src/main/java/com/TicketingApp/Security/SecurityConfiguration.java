@@ -21,6 +21,7 @@ public class SecurityConfiguration {
             .authenticationProvider(supabaseAuthenticationProvider)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/email-form/**").permitAll()
+                .requestMatchers("/send-email").permitAll()
                 .requestMatchers("/invite/**").permitAll()
                 .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/login/forgot-password").permitAll()

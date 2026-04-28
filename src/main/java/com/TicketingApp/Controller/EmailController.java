@@ -16,9 +16,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.TicketingApp.Entity.Ticket;
 import com.TicketingApp.Entity.TicketStatus;
 import com.TicketingApp.Service.EmailService;
-
+import com.TicketingApp.Service.SupabaseStorageService;
 import com.TicketingApp.Service.TicketService;
 import com.TicketingApp.Service.UserManagementService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -29,14 +32,20 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @Controller
 
 public class EmailController {
+    private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
+
     private final EmailService emailService;
     private final TicketService ticketService;
     private final UserManagementService userManagementService;
+    private final SupabaseStorageService supabaseStorageService;
 
-    public EmailController(EmailService emailService, TicketService ticketService, UserManagementService userManagementService) {
+    public EmailController(EmailService emailService, TicketService ticketService,
+                           UserManagementService userManagementService,
+                           SupabaseStorageService supabaseStorageService) {
         this.emailService = emailService;
         this.ticketService = ticketService;
         this.userManagementService = userManagementService;
+        this.supabaseStorageService = supabaseStorageService;
     }
 
     @GetMapping("/")
@@ -111,7 +120,8 @@ public class EmailController {
         try {
             ticketService.createTicket(ticket);
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "❌ Database Error: Could not save ticket.");
+            logger.error("Failed to save ticket", e);
+            model.addAttribute("errorMessage", "❌ Database Error: Could not save ticket. " + e.getMessage());
             return "email-form";
         }
 
@@ -138,6 +148,13 @@ public class EmailController {
         Ticket ticket = ticketService.findById(id);
         if (ticket == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
+        }
+        if (ticket.getSupabaseFilename() != null && !ticket.getSupabaseFilename().isBlank()) {
+            try {
+                ticket.setAttachmentUrl(supabaseStorageService.getSignedUrl(ticket.getSupabaseFilename()));
+            } catch (Exception e) {
+                logger.warn("Could not generate signed URL for ticket {}: {}", id, e.getMessage());
+            }
         }
         model.addAttribute("ticket", ticket);
         model.addAttribute("ticketStatuses", TicketStatus.values());

@@ -51,6 +51,7 @@ public class Ticket {
 
     private String attachmentFilename;
 
+    @Transient
     private String attachmentUrl;
 
     private String supabaseFilename;
