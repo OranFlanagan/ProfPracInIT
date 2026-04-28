@@ -28,6 +28,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/product-cards.html").permitAll()
                 .requestMatchers("/autocomplete.html").permitAll()
                 .requestMatchers("/suggestion-result.html").permitAll()
+                .requestMatchers("/api/issues/*/fixes").permitAll() 
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
