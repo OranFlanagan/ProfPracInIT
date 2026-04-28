@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg: #f0ede6;
+    --surface: #ffffff;
+    --surface-hover: #fafaf9;
+    --border: rgba(26, 26, 26, 0.12);
+    --border-strong: rgba(26, 26, 26, 0.25);
+    --accent: #1D9E75;
+    --accent-light: #e1f5ee;
+    --accent-dark: #085041;
+    --accent-red: #d94f3d;
+    --accent-red-light: #fdecea;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --card-radius: 14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px;
+}
+
+.admin-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border-strong);
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+
+.logo span { color: var(--accent); }
+
+.header-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.preview-link {
+    font-size: 0.68rem;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 7px 14px;
+    border-radius: 8px;
+    transition: background 0.15s;
+}
+
+.preview-link:hover { background: var(--accent-light); }
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.section-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+}
+
+.btn-accent {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.15s;
+}
+
+.btn-accent:hover { background: #0F6E56; }
+
+.btn-small {
+    padding: 5px 11px;
+    font-size: 0.6rem;
+    border-radius: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--muted);
+    transition: background 0.15s;
+}
+
+.btn-small:hover { background: var(--surface-hover); }
+
+.btn-small-green {
+    border-color: var(--accent);
+    color: var(--accent-dark);
+    background: var(--accent-light);
+}
+
+.btn-small-green:hover { background: #b8e8d4; }
+
+.btn-small-red {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+    background: var(--accent-red-light);
+}
+
+.btn-small-red:hover { background: #f9d5d1; }
+
+.item-list {
+    border: 1px solid var(--border);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    background: var(--surface);
+}
+
+.item-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.item-row:last-child { border-bottom: none; }
+.item-row:hover { background: var(--surface-hover); }
+
+.item-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--bg);
+}
+
+.item-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-name {
+    flex: 1;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 0;
+}
+
+.item-sub {
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.row-btns {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+
+.form-row-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-label-inline {
+    font-size: 0.65rem;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.form-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}

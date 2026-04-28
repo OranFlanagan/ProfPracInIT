@@ -3,6 +3,8 @@ package com.TicketingApp.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import jakarta.persistence.JoinColumn;
@@ -22,6 +24,7 @@ import lombok.Setter;
 public class IssueFix {
     
 @Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
 public long Id;
 
 

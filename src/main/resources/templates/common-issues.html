@@ -6,7 +6,7 @@
     <title>Product Support</title>
     <link rel="stylesheet" th:href="@{/styles/common-issues.css}">
     <link rel="stylesheet" th:href="@{/styles/product-log.css}">
-
+    <script th:src="@{/js/common-issues.js}"></script>
 </head>
 <body>
 
@@ -58,41 +58,6 @@
     </div>
 
 </div>
-
-<script>
-const fixCache = {};
-
-async function toggleFix(card) {
-    const panel = card.querySelector('.fix-panel');
-    const issueId = card.dataset.issueId;
-
-    if (panel.style.display === 'block') {
-        panel.style.display = 'none';
-        return;
-    }
-
-    if (fixCache[issueId]) {
-        panel.innerHTML = fixCache[issueId];
-        panel.style.display = 'block';
-        return;
-    }
-
-    panel.innerHTML = '<p>Loading...</p>';
-    panel.style.display = 'block';
-
-    try {
-        const res = await fetch(`/api/issues/${issueId}/fixes`);
-        const fixes = await res.json();
-        const html = fixes.length
-            ? `<p>${fixes[0].fixDescription}</p>`
-            : `<p>No fix available yet.</p>`;
-        fixCache[issueId] = html;
-        panel.innerHTML = html;
-    } catch (err) {
-        panel.innerHTML = '<p>Could not load fix.</p>';
-    }
-}
-</script>
 
     <!-- Can't find button -->
     <div class="cant-find-button">

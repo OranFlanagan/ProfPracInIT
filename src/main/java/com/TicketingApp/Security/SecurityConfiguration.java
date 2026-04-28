@@ -29,7 +29,15 @@ public class SecurityConfiguration {
                 .requestMatchers("/autocomplete.html").permitAll()
                 .requestMatchers("/suggestion-result.html").permitAll()
                 .requestMatchers("/api/issues/*/fixes").permitAll() 
-                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+               .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/admin-deflection-editor").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/admin-deflection-editor/**").hasAuthority("ROLE_ADMIN")
+                //for testing
+                //.requestMatchers("/admin-deflection-editor/**").permitAll()
+
+               .requestMatchers("/admin-deflection-editor/add-product").hasAuthority("ROLE_ADMIN")
+               .requestMatchers("/admin-deflection-editor/add-issue").hasAuthority("ROLE_ADMIN")
+               .requestMatchers("/admin-deflection-editor/add-fix").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

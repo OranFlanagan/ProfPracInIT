@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="rows">
+
+  <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+    No products found.
+  </div>
+
+  <div th:each="product : ${products}">
+    <div class="item-row">
+      <div class="item-thumb">
+        <img th:src="${product.urlString}" th:alt="${product.name}"
+             onerror="this.src='https://placehold.co/40x40'">
+      </div>
+      <div class="item-name">
+        <span th:text="${product.name}">Product name</span>
+        <div class="item-sub" th:text="${product.category}">Category</div>
+      </div>
+      <span class="badge"
+            th:classappend="${product.featuredOnSupportPage} ? 'badge-has' : 'badge-none'"
+            th:text="${product.featuredOnSupportPage} ? 'Live' : 'Hidden'">
+      </span>
+      <div class="row-btns">
+        <button class="btn-small btn-small-green"
+                th:onclick="|toggleSection('issues-${product.id}')|">
+          Manage issues
+        </button>
+        <form th:action="@{/admin-deflection-editor/remove-product}" method="post" style="display:inline;">
+          <input type="hidden" name="productId" th:value="${product.id}">
+          <button type="submit" class="btn-small btn-small-red"
+                  onclick="return confirm('Remove this product and all its issues?')">
+            Remove
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div th:id="'issues-' + ${product.id}" style="display:none;" class="issues-panel">
+      <div th:each="issue : ${product.issues}" class="issue-row">
+        <span class="issue-title-text" th:text="${issue.Title}">Issue title</span>
+        <div class="row-btns">
+          <button class="btn-small btn-small-green"
+                  th:onclick="|toggleSection('fix-${issue.id}')|">
+            Add fix
+          </button>
+          <form th:action="@{/admin-deflection-editor/remove-issue}" method="post" style="display:inline;">
+            <input type="hidden" name="issueId" th:value="${issue.id}">
+            <button type="submit" class="btn-small btn-small-red"
+                    onclick="return confirm('Remove this issue and its fix?')">
+              Remove
+            </button>
+          </form>
+        </div>
+        <div th:id="'fix-' + ${issue.id}" style="display:none;" class="form-card">
+          <form th:action="@{/admin-deflection-editor/add-fix}" method="post">
+            <input type="hidden" name="issueId" th:value="${issue.id}">
+            <div class="form-row">
+              <label class="form-label">Fix description</label>
+              <textarea name="fixDescription" class="form-input form-textarea"
+                        placeholder="Describe the fix..."></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-accent">Save fix</button>
+              <button type="button" class="btn-ghost"
+                      th:onclick="|toggleSection('fix-${issue.id}')|">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="form-card" style="margin-top:10px;">
+        <form th:action="@{/admin-deflection-editor/add-issue}" method="post">
+          <input type="hidden" name="productId" th:value="${product.id}">
+          <div class="form-row">
+            <label class="form-label">New issue title</label>
+            <input type="text" name="title" class="form-input"
+                   placeholder="e.g. Bed hitting extruder during auto-leveling" required>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-accent">Add issue</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</th:block>
+</body>
+</html>

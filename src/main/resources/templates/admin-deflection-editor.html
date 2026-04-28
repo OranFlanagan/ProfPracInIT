@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Products</title>
+    <link rel="stylesheet" th:href="@{/styles/admin-deflection-editor.css}">
+    <link rel="stylesheet" th:href="@{/styles/search.css}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+
+<div class="admin-wrap">
+
+    <div class="header">
+        <div>
+            <div class="logo">sg<span>.</span>admin</div>
+            <div class="header-sub">SUPPORT MANAGEMENT</div>
+        </div>
+        <a href="/support-page" class="preview-link">View customer page ↗</a>
+    </div>
+
+    <div class="top-bar">
+        <div class="section-label">Products <span th:text="'(' + ${#lists.size(products)} + ')'"></span></div>
+
+        <div class="search-wrapper"
+             hx-get="/admin-deflection-editor/search"
+             hx-trigger="keyup from:#admin-search-input delay:300ms"
+             hx-target="#item-list"
+             hx-swap="innerHTML"
+             hx-include="#admin-search-input">
+
+            <input id="admin-search-input"
+                   class="form-input"
+                   type="text"
+                   name="search"
+                   placeholder="Search products..."
+                   autocomplete="off"
+                   hx-get="/admin-deflection-editor/autocomplete"
+                   hx-trigger="keyup changed delay:220ms"
+                   hx-target="#admin-autocomplete-list"
+                   hx-swap="innerHTML">
+
+            <ul id="admin-autocomplete-list" class="autocomplete-list"></ul>
+
+        </div>
+
+        <button class="btn-accent" onclick="toggleSection('add-product-form')">+ Add product</button>
+    </div>
+
+    <!-- Add Product Form -->
+    <div id="add-product-form" style="display:none;" class="form-card">
+        <form th:action="@{/admin-deflection-editor/add-product}" method="post">
+            <div class="form-row">
+                <label class="form-label">Product name</label>
+                <input type="text" name="name" class="form-input" placeholder="e.g. Ultimaker S5" required>
+            </div>
+            <div class="form-row">
+                <label class="form-label">Category</label>
+                <input type="text" name="category" class="form-input" placeholder="e.g. 3D Printers">
+            </div>
+            <div class="form-row">
+                <label class="form-label">Image URL</label>
+                <input type="text" name="urlString" class="form-input" placeholder="https://...">
+            </div>
+            <div class="form-row form-row-check">
+                <input type="checkbox" name="featuredOnSupportPage" id="featured" value="true">
+                <label for="featured" class="form-label-inline">Show on customer support page</label>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-accent">Save product</button>
+                <button type="button" class="btn-ghost" onclick="toggleSection('add-product-form')">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Product List -->
+    <div class="item-list" id="item-list">
+
+        <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+            No products yet — add one above.
+        </div>
+
+        <div th:each="product : ${products}">
+
+            <!-- Product Row -->
+            <div class="item-row">
+                <div class="item-thumb">
+                    <img th:src="${product.urlString}" th:alt="${product.name}"
+                         onerror="this.src='https://placehold.co/40x40'">
+                </div>
+                <div class="item-name">
+                    <span th:text="${product.name}">Product name</span>
+                    <div class="item-sub" th:text="${product.category}">Category</div>
+                </div>
+                <span class="badge"
+                      th:classappend="${product.featuredOnSupportPage} ? 'badge-has' : 'badge-none'"
+                      th:text="${product.featuredOnSupportPage} ? 'Live' : 'Hidden'">
+                </span>
+                <div class="row-btns">
+                    <button class="btn-small btn-small-green"
+                            th:onclick="|toggleSection('issues-${product.id}')|">
+                        Manage issues
+                    </button>
+                    <form th:action="@{/admin-deflection-editor/remove-product}" method="post" style="display:inline;">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <button type="submit" class="btn-small btn-small-red"
+                                onclick="return confirm('Remove this product and all its issues?')">
+                            Remove
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Issues Panel -->
+            <div th:id="'issues-' + ${product.id}" style="display:none;" class="issues-panel">
+
+                <div th:each="issue : ${product.issues}" class="issue-row">
+                    <span class="issue-title-text" th:text="${issue.Title}">Issue title</span>
+                    <span class="badge badge-none"></span>
+                    <div class="row-btns">
+                        <button class="btn-small btn-small-green"
+                                th:onclick="|toggleSection('fix-${issue.id}')|">
+                            Add fix
+                        </button>
+                        <form th:action="@{/admin-deflection-editor/remove-issue}" method="post" style="display:inline;">
+                            <input type="hidden" name="issueId" th:value="${issue.id}">
+                            <button type="submit" class="btn-small btn-small-red"
+                                    onclick="return confirm('Remove this issue and its fix?')">
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+
+                    <div th:id="'fix-' + ${issue.id}" style="display:none;" class="form-card">
+                        <form th:action="@{/admin-deflection-editor/add-fix}" method="post">
+                            <input type="hidden" name="issueId" th:value="${issue.id}">
+                            <div class="form-row">
+                                <label class="form-label">Fix description</label>
+                                <textarea name="fixDescription" class="form-input form-textarea"
+                                          placeholder="Describe the fix in plain language..."></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-accent">Save fix</button>
+                                <button type="button" class="btn-ghost"
+                                        th:onclick="|toggleSection('fix-${issue.id}')|">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="form-card" style="margin-top:10px;">
+                    <form th:action="@{/admin-deflection-editor/add-issue}" method="post">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <div class="form-row">
+                            <label class="form-label">New issue </label>
+                            <input type="text" name="title" class="form-input"
+                                   placeholder="e.g. Bed hitting extruder during auto-leveling" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-accent">Add issue</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+function toggleSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectAdminSuggestion(name) {
+    const input = document.getElementById('admin-search-input');
+    const list  = document.getElementById('admin-autocomplete-list');
+
+    input.value = name;
+    list.innerHTML = '';
+
+    htmx.ajax('GET', '/admin-deflection-editor/search?search=' + encodeURIComponent(name), {
+        target: '#item-list',
+        swap: 'innerHTML'
+    });
+}
+
+let adminSelectedIndex = -1;
+
+document.getElementById('admin-search-input').addEventListener('keydown', function(e) {
+    const items = document.querySelectorAll('#admin-autocomplete-list .autocomplete-item');
+    if (!items.length) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        adminSelectedIndex = Math.min(adminSelectedIndex + 1, items.length - 1);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        adminSelectedIndex = Math.max(adminSelectedIndex - 1, -1);
+    } else if (e.key === 'Enter' && adminSelectedIndex >= 0) {
+        e.preventDefault();
+        items[adminSelectedIndex].click();
+        adminSelectedIndex = -1;
+        return;
+    } else if (e.key === 'Escape') {
+        document.getElementById('admin-autocomplete-list').innerHTML = '';
+        adminSelectedIndex = -1;
+        return;
+    } else {
+        adminSelectedIndex = -1;
+    }
+
+    items.forEach(item => item.classList.remove('autocomplete-highlighted'));
+    if (adminSelectedIndex >= 0) items[adminSelectedIndex].classList.add('autocomplete-highlighted');
+});
+
+document.addEventListener('click', function(e) {
+    const wrapper = document.querySelector('.search-wrapper');
+    if (!wrapper.contains(e.target)) {
+        document.getElementById('admin-autocomplete-list').innerHTML = '';
+        adminSelectedIndex = -1;
+    }
+})
+</script>
+
+</body>
+</html>
