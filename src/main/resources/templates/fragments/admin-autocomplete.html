@@ -5,7 +5,8 @@
   <th:block th:fragment="suggestions">
     <li th:each="product : ${suggestions}"
         class="autocomplete-item"
-        th:attr="onclick='selectAdminSuggestion(' + '&quot;' + ${product.name} + '&quot;' + ')'">
+        th:data-name="${product.name}"
+        onclick="selectAdminSuggestion(this.dataset.name)">
       <span class="autocomplete-name" th:text="${product.name}"></span>
     </li>
   </th:block>

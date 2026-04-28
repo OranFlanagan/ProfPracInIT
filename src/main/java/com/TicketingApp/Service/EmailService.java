@@ -5,6 +5,7 @@ import com.resend.services.emails.model.SendEmailRequest;
 import com.resend.services.emails.model.SendEmailResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.TicketingApp.Entity.Ticket;
@@ -42,9 +43,9 @@ public class EmailService {
             // Get template and replace variables
             String template = emailTemplateService.getTicketSubmittedTemplate();
             String htmlBody = template
-                .replace("${ticket.issueDescription}", ticket.getIssueDescription())
-                .replace("${ticket.name}", ticket.getName())
-                .replace("${ticket.email}", ticket.getEmail())
+                .replace("${ticket.issueDescription}", HtmlUtils.htmlEscape(ticket.getIssueDescription()))
+                .replace("${ticket.name}", HtmlUtils.htmlEscape(ticket.getName()))
+                .replace("${ticket.email}", HtmlUtils.htmlEscape(ticket.getEmail()))
                 .replace("${ticket.orderNum}", String.valueOf(ticket.getOrderNum()));
 
             // Initialize Resend client with API key

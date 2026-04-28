@@ -122,6 +122,7 @@
 
         <!-- Ticket Form -->
         <form th:action="@{/send-email}" th:object="${ticket}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
             <!-- Name Field -->
             <label for="name">Full Name:</label>

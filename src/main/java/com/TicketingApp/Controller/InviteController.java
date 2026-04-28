@@ -25,6 +25,10 @@ public class InviteController {
     public String acceptInvite(@RequestParam String accessToken,
                                @RequestParam String password,
                                RedirectAttributes redirectAttributes) {
+        if (password == null || password.length() < 8) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Password must be at least 8 characters.");
+            return "redirect:/invite/accept";
+        }
         boolean success = supabaseAuthService.setPassword(accessToken, password);
         if (success) {
             redirectAttributes.addFlashAttribute("successMessage", "Password set successfully. You can now log in.");

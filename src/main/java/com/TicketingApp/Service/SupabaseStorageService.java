@@ -10,7 +10,7 @@ import java.io.IOException;
 
 @Service
 public class SupabaseStorageService {
-       
+
     @Value("${supabase.url}")
     private String SUPABASE_URL;
 
@@ -22,17 +22,8 @@ public class SupabaseStorageService {
 
 
     public String uploadFile(MultipartFile file, String ticketId) throws IOException {
-        // Debug: Print the first 8 characters of each config value (never print full key)
-        System.out.println("[SupabaseStorageService] SUPABASE_URL: " + (SUPABASE_URL != null ? SUPABASE_URL.substring(0, Math.min(8, SUPABASE_URL.length())) : "null"));
-        System.out.println("[SupabaseStorageService] SUPABASE_KEY: " + (SUPABASE_KEY != null ? SUPABASE_KEY.substring(0, Math.min(8, SUPABASE_KEY.length())) : "null"));
-        System.out.println("[SupabaseStorageService] BUCKET: " + (BUCKET != null ? BUCKET.substring(0, Math.min(8, BUCKET.length())) : "null"));
         String fileName = ticketId + "_" + file.getOriginalFilename();
         String url = SUPABASE_URL + "/storage/v1/object/" + BUCKET + "/" + fileName;
-
-        System.out.println("[SupabaseStorageService] Uploading file: " + fileName);
-        System.out.println("[SupabaseStorageService] Target URL: " + url);
-        System.out.println("[SupabaseStorageService] Content-Type: " + file.getContentType());
-        System.out.println("[SupabaseStorageService] File size: " + file.getSize());
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -44,18 +35,15 @@ public class SupabaseStorageService {
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 
-            System.out.println("[SupabaseStorageService] Response status: " + response.getStatusCode());
-            System.out.println("[SupabaseStorageService] Response body: " + response.getBody());
-
             if (response.getStatusCode().is2xxSuccessful()) {
                 return fileName;
             } else {
                 throw new RuntimeException("Failed to upload file to Supabase: " + response.getBody());
             }
-        } catch (Exception e) {
-            System.out.println("[SupabaseStorageService] Exception during upload: " + e.getMessage());
-            e.printStackTrace();
+        } catch (RuntimeException e) {
             throw e;
+        } catch (Exception e) {
+            throw new IOException("Upload failed: " + e.getMessage(), e);
         }
     }
 
@@ -63,28 +51,19 @@ public class SupabaseStorageService {
         return SUPABASE_URL + "/storage/v1/object/public/" + BUCKET + "/" + fileName;
     }
 
-     /**
-         * Removes an attachment from the Supabase bucket by filename.
-         * @param fileName The name of the file to remove (e.g., ticket-..._filename.ext)
-         * @return true if deleted successfully, false otherwise
-         */
-        public boolean deleteFile(String fileName) {
-            String url = SUPABASE_URL + "/storage/v1/object/" + BUCKET + "/" + fileName;
-            System.out.println("[SupabaseStorageService] Deleting file: " + fileName);
-            System.out.println("[SupabaseStorageService] DELETE URL: " + url);
+    public boolean deleteFile(String fileName) {
+        String url = SUPABASE_URL + "/storage/v1/object/" + BUCKET + "/" + fileName;
 
-            RestTemplate restTemplate = new RestTemplate();
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(SUPABASE_KEY);
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(SUPABASE_KEY);
 
-            HttpEntity<Void> entity = new HttpEntity<>(headers);
-            try {
-                ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
-                System.out.println("[SupabaseStorageService] Delete response status: " + response.getStatusCode());
-                return response.getStatusCode().is2xxSuccessful();
-            } catch (Exception e) {
-                System.out.println("[SupabaseStorageService] Exception during delete: " + e.getMessage());
-                return false;
-            }
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, String.class);
+            return response.getStatusCode().is2xxSuccessful();
+        } catch (Exception e) {
+            return false;
         }
+    }
 }

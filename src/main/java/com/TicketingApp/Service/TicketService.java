@@ -15,6 +15,7 @@ import com.TicketingApp.Repository.TicketRepository;
 import com.TicketingApp.Service.SupabaseStorageService;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -57,7 +58,8 @@ public class TicketService {
 
     public void createTicket(Ticket ticket) throws Exception {
         if (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) {
-            String originalFilename = ticket.getAttachment().getOriginalFilename();
+            String rawFilename = ticket.getAttachment().getOriginalFilename();
+            String originalFilename = Paths.get(rawFilename != null ? rawFilename : "").getFileName().toString();
             // Validate file type to prevent spoofing
             validateAndDetectMimeType(ticket.getAttachment().getBytes(), originalFilename);
             String supabaseFileName = supabaseStorageService.uploadFile(ticket.getAttachment(), "ticket-" + System.currentTimeMillis());
@@ -159,10 +161,8 @@ public class TicketService {
         if (ticket == null) {
             return false;
         }
-        // Remove attachment from Supabase if it exists
         if (ticket.getSupabaseFilename() != null && !ticket.getSupabaseFilename().isBlank()) {
-            boolean deleted = supabaseStorageService.deleteFile(ticket.getSupabaseFilename());
-            System.out.println("[TicketService] Attachment delete attempted: " + ticket.getSupabaseFilename() + ", success: " + deleted);
+            supabaseStorageService.deleteFile(ticket.getSupabaseFilename());
         }
         emailMessageRepository.deleteByTicket(ticket);
         ticketRepository.delete(ticket);

@@ -29,6 +29,7 @@ import com.TicketingApp.Service.UserManagementService;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -147,6 +148,7 @@ public class EmailController {
         model.addAttribute("thread", thread);
         return "ticket-details";
     }
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF', 'ROLE_ADMIN')")
     @PostMapping("/tickets/{id}/assign")
     public String updateAssignedStaff(
             @PathVariable Long id,
@@ -159,6 +161,7 @@ public class EmailController {
         return "redirect:" + resolveRedirectPath(id, redirectTo);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF', 'ROLE_ADMIN')")
     @PostMapping("/tickets/{id}/status")
     public String updateTicketStatus(
             @PathVariable Long id,
@@ -191,11 +194,18 @@ public class EmailController {
         return "redirect:/staff-dashboard";
     }
 
-    private String resolveRedirectPath(Long id, String redirectTo) {
-        if (redirectTo != null && redirectTo.startsWith("/") && !redirectTo.startsWith("//")) {
-            return redirectTo;
-        }
+    private static final List<String> ALLOWED_REDIRECT_PREFIXES = List.of(
+        "/tickets/", "/staff-dashboard", "/admin"
+    );
 
+    private String resolveRedirectPath(Long id, String redirectTo) {
+        if (redirectTo != null) {
+            for (String prefix : ALLOWED_REDIRECT_PREFIXES) {
+                if (redirectTo.startsWith(prefix)) {
+                    return redirectTo;
+                }
+            }
+        }
         return "/tickets/" + id;
     }
 }

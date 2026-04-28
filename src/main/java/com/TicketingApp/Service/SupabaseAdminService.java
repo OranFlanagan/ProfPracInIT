@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,8 +64,11 @@ public class SupabaseAdminService {
     // Returns true if deleted or user did not exist in Supabase; false on error
     public boolean deleteUser(String email) {
         try {
+            String listUri = UriComponentsBuilder.fromUriString(supabaseUrl + "/auth/v1/admin/users")
+                .queryParam("filter", email)
+                .build().toUriString();
             Map<String, Object> listBody = restClient.get()
-                .uri(supabaseUrl + "/auth/v1/admin/users?filter=" + email)
+                .uri(listUri)
                 .headers(h -> h.addAll(adminHeaders()))
                 .retrieve()
                 .body(new ParameterizedTypeReference<Map<String, Object>>() {});
