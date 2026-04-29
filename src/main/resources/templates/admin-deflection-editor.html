@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Products</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/styles/admin-deflection-editor.css}">
-    <link rel="stylesheet" th:href="@{/styles/search.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin-search.css}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
@@ -15,7 +16,7 @@
     <div class="header">
         <div>
             <div class="logo">sg<span>.</span>admin</div>
-            <div class="header-sub">SUPPORT MANAGEMENT</div>
+            <div class="header-sub">Support Management</div>
         </div>
         <a href="/support-page" class="preview-link">View customer page ↗</a>
     </div>
@@ -23,15 +24,20 @@
     <div class="top-bar">
         <div class="section-label">Products <span th:text="'(' + ${#lists.size(products)} + ')'"></span></div>
 
-        <div class="search-wrapper"
+        <div class="admin-search-wrapper"
              hx-get="/admin-deflection-editor/search"
              hx-trigger="keyup from:#admin-search-input delay:300ms"
              hx-target="#item-list"
              hx-swap="innerHTML"
              hx-include="#admin-search-input">
 
+            <svg class="admin-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+
             <input id="admin-search-input"
-                   class="form-input"
+                   class="admin-search-input"
                    type="text"
                    name="search"
                    placeholder="Search products..."
@@ -41,8 +47,7 @@
                    hx-target="#admin-autocomplete-list"
                    hx-swap="innerHTML">
 
-            <ul id="admin-autocomplete-list" class="autocomplete-list"></ul>
-
+            <ul id="admin-autocomplete-list" class="admin-autocomplete-list"></ul>
         </div>
 
         <button class="btn-accent" onclick="toggleSection('add-product-form')">+ Add product</button>
@@ -60,10 +65,9 @@
                 <input type="text" name="category" class="form-input" placeholder="e.g. 3D Printers">
             </div>
             <div class="form-row">
-             <label class="form-label">Product Code</label>
-            <input type="text" name="code" class="form-input" placeholder="e.g. UM-S5">
+                <label class="form-label">Product code</label>
+                <input type="text" name="code" class="form-input" placeholder="e.g. UM-S5">
             </div>
-
             <div class="form-row">
                 <label class="form-label">Image URL</label>
                 <input type="text" name="urlString" class="form-input" placeholder="https://...">
@@ -122,7 +126,6 @@
 
                 <div th:each="issue : ${product.issues}" class="issue-row">
                     <span class="issue-title-text" th:text="${issue.Title}">Issue title</span>
-                    <span class="badge badge-none"></span>
                     <div class="row-btns">
                         <button class="btn-small btn-small-green"
                                 th:onclick="|toggleSection('fix-${issue.id}')|">
@@ -137,6 +140,7 @@
                         </form>
                     </div>
 
+                    <!-- Fix Form -->
                     <div th:id="'fix-' + ${issue.id}" style="display:none;" class="form-card">
                         <form th:action="@{/admin-deflection-editor/add-fix}" method="post">
                             <input type="hidden" name="issueId" th:value="${issue.id}">
@@ -154,11 +158,12 @@
                     </div>
                 </div>
 
+                <!-- Add Issue Form -->
                 <div class="form-card" style="margin-top:10px;">
                     <form th:action="@{/admin-deflection-editor/add-issue}" method="post">
                         <input type="hidden" name="productId" th:value="${product.id}">
                         <div class="form-row">
-                            <label class="form-label">New issue </label>
+                            <label class="form-label">New issue</label>
                             <input type="text" name="title" class="form-input"
                                    placeholder="e.g. Bed hitting extruder during auto-leveling" required>
                         </div>
@@ -197,7 +202,7 @@ function selectAdminSuggestion(name) {
 let adminSelectedIndex = -1;
 
 document.getElementById('admin-search-input').addEventListener('keydown', function(e) {
-    const items = document.querySelectorAll('#admin-autocomplete-list .autocomplete-item');
+    const items = document.querySelectorAll('#admin-autocomplete-list .admin-autocomplete-item');
     if (!items.length) return;
 
     if (e.key === 'ArrowDown') {
@@ -219,17 +224,17 @@ document.getElementById('admin-search-input').addEventListener('keydown', functi
         adminSelectedIndex = -1;
     }
 
-    items.forEach(item => item.classList.remove('autocomplete-highlighted'));
-    if (adminSelectedIndex >= 0) items[adminSelectedIndex].classList.add('autocomplete-highlighted');
+    items.forEach(item => item.classList.remove('admin-autocomplete-highlighted'));
+    if (adminSelectedIndex >= 0) items[adminSelectedIndex].classList.add('admin-autocomplete-highlighted');
 });
 
 document.addEventListener('click', function(e) {
-    const wrapper = document.querySelector('.search-wrapper');
-    if (!wrapper.contains(e.target)) {
+    const wrapper = document.querySelector('.admin-search-wrapper');
+    if (wrapper && !wrapper.contains(e.target)) {
         document.getElementById('admin-autocomplete-list').innerHTML = '';
         adminSelectedIndex = -1;
     }
-})
+});
 </script>
 
 </body>

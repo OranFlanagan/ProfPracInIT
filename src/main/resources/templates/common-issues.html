@@ -12,21 +12,21 @@
 
     <div class="container">
 
-      <!-- Product Display -->
-<div class="product-box">
-    <div class="product-image">
-        <img th:src="${product.urlString}" 
-             th:alt="${product.name}"
-             class="card-image">
-    </div>
+        <!-- Product Display -->
+        <div class="product-box">
+            <div class="product-image">
+                <img th:src="${product.urlString}"
+                     th:alt="${product.name}"
+                     class="card-image">
+            </div>
 
-    <div class="card-id" th:text="'#' + ${product.id}"></div>
+            <div class="card-id" th:text="'#' + ${product.id}"></div>
 
-    <h2 class="product-title" th:text="${product.name}">Product Name</h2>
+            <h2 class="product-title" th:text="${product.name}">Product Name</h2>
 
-<p class="product-code" th:text="'SKU: ' + ${product.code}" th:if="${product.code != null and product.code != ''}"></p>
-    <a href="/support-page" class="change-product">Change Product</a>
-</div>
+            <p class="product-code" th:text="'SKU: ' + ${product.code}" th:if="${product.code != null and product.code != ''}"></p>
+            <a href="/support-page" class="change-product">Change Product</a>
+        </div>
 
         <!-- Highlight Banner -->
         <div class="highlight-box">
@@ -34,35 +34,42 @@
         </div>
 
         <!-- Common Issues -->
-<div class="issues-section">
+        <div class="issues-section">
 
- <div th:each="issue, iterStat : ${issues}"
-     th:if="${iterStat.index < 3}"
-     class="issue-card"
-     th:attr="data-issue-id=${issue.id},data-product-id=${product.id}"
-     onclick="toggleFix(this)">
+            <div th:each="issue, iterStat : ${issues}"
+                 class="issue-card"
+                 th:classappend="${iterStat.index >= 3} ? ' issue-card--hidden' : ''"
+                 th:attr="data-issue-id=${issue.id},data-product-id=${product.id}"
+                 onclick="toggleFix(this)">
 
-        <h3 th:text="${issue.Title}">Issue Title</h3>
+                <h3 th:text="${issue.Title}">Issue Title</h3>
 
-        <div class="fix-panel" style="display:none;"></div>
+                <div class="fix-panel" style="display:none;"></div>
 
-    </div>
+            </div>
 
-    <div th:if="${#lists.size(issues) < 1}" class="issue-card issue-card--empty">
-        <h3>No issues found</h3>
-    </div>
-    <div th:if="${#lists.size(issues) < 2}" class="issue-card issue-card--empty">
-        <h3>—</h3>
-    </div>
-    <div th:if="${#lists.size(issues) < 3}" class="issue-card issue-card--empty">
-        <h3>—</h3>
-    </div>
+            <div th:if="${#lists.size(issues) < 1}" class="issue-card issue-card--empty">
+                <h3>No issues found</h3>
+            </div>
+            <div th:if="${#lists.size(issues) < 2}" class="issue-card issue-card--empty">
+                <h3>—</h3>
+            </div>
+            <div th:if="${#lists.size(issues) < 3}" class="issue-card issue-card--empty">
+                <h3>—</h3>
+            </div>
 
-</div>
+        </div>
 
-    <!-- Can't find button -->
-    <div class="cant-find-button">
-        <button onclick="window.location.href='/email-form'">Can't find a fix?</button>
+        <!-- Show More button — only renders if there are more than 3 issues -->
+        <div class="show-more-wrap" th:if="${#lists.size(issues) > 3}">
+            <button class="show-more-btn" onclick="toggleMoreIssues(this)">Show more issues</button>
+        </div>
+
+        <!-- Can't find button -->
+        <div class="cant-find-button">
+            <button onclick="window.location.href='/email-form'">Can't find a fix?</button>
+        </div>
+
     </div>
 
 </body>

@@ -1,0 +1,70 @@
+.admin-search-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.admin-search-input {
+    width: 100%;
+    padding: 9px 12px 9px 36px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    background: #f5f7f9;
+    border: 0.5px solid rgba(0, 0, 0, 0.13);
+    border-radius: 8px;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.admin-search-input::placeholder { color: #94a3b8; }
+
+.admin-search-input:focus {
+    border-color: #0ea5a0;
+    box-shadow: 0 0 0 3px rgba(14, 165, 160, 0.10);
+    background: #ffffff;
+}
+
+.admin-search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+    color: #94a3b8;
+}
+
+.admin-autocomplete-list {
+    display: block;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 0.5px solid rgba(0, 0, 0, 0.13);
+    border-radius: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+    z-index: 100;
+}
+
+.admin-autocomplete-list:empty { display: none; }
+
+.admin-autocomplete-item {
+    padding: 9px 12px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: #0f172a;
+    border-radius: 6px;
+    transition: background 0.1s;
+}
+
+.admin-autocomplete-item:hover,
+.admin-autocomplete-highlighted {
+    background: #e0f7f6;
+    color: #0b7a76;
+}

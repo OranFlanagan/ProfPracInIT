@@ -1,5 +1,22 @@
 const fixCache = {};
 
+function toggleMoreIssues(btn) {
+    const hidden = document.querySelectorAll('.issue-card--hidden');
+    const isExpanded = btn.dataset.expanded === 'true';
+
+    if (isExpanded) {
+        hidden.forEach(card => card.style.display = 'none');
+        btn.textContent = 'Show more issues';
+        btn.dataset.expanded = 'false';
+    } else {
+        document.querySelectorAll('.issue-card--hidden').forEach(card => {
+            card.style.display = 'block';
+        });
+        btn.textContent = 'Show fewer issues';
+        btn.dataset.expanded = 'true';
+    }
+}
+
 async function toggleFix(card) {
     const panel = card.querySelector('.fix-panel');
     const issueId = card.dataset.issueId;
@@ -32,8 +49,8 @@ async function toggleFix(card) {
             <div class="fix-feedback">
                 <p class="fix-feedback-label">Did this fix your issue?</p>
                 <div class="fix-feedback-buttons">
-                    <button class="btn-resolved" 
-                        data-issue-id="${issueId}" 
+                    <button class="btn-resolved"
+                        data-issue-id="${issueId}"
                         data-product-id="${productId}"
                         onclick="issueResolved(this)">Issue resolved</button>
                     <button class="btn-problems" onclick="window.location.href='/email-form?issueId=${issueId}'">Still having problems</button>
@@ -65,3 +82,10 @@ async function issueResolved(btn) {
     const panel = btn.closest('.fix-panel');
     panel.innerHTML = '<p>Glad that sorted it!</p>';
 }
+
+// Hide extra issues on page load
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.issue-card--hidden').forEach(card => {
+        card.style.display = 'none';
+    });
+});
