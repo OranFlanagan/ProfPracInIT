@@ -4,139 +4,272 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --border-strong: rgba(0,0,0,0.13);
+            --teal: #0ea5a0;
+            --teal-light: #e0f7f6;
+            --teal-dark: #0b7a76;
+            --text: #0f172a;
+            --muted: #94a3b8;
+            --red: #e53935;
+            --red-light: #fdecea;
+            --card-radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
         }
+
         .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
         }
-        h1 {
-            color: #333;
+
+        .brand-header {
             text-align: center;
+            margin-bottom: 32px;
         }
-        form {
+
+        .brand-header img {
+            height: 38px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 16px;
+        }
+
+        .brand-header h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text);
+        }
+
+        .brand-header p {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+            border: 0.5px solid rgba(14, 165, 160, 0.25);
+        }
+
+        .alert-error {
+            background: var(--red-light);
+            color: var(--red);
+            border: 0.5px solid rgba(229, 57, 53, 0.2);
+        }
+
+        .form-card {
+            background: var(--surface);
+            border: 0.5px solid var(--border-strong);
+            border-radius: var(--card-radius);
+            padding: 32px;
+        }
+
+        .form-group {
             display: flex;
             flex-direction: column;
+            gap: 6px;
+            margin-bottom: 18px;
         }
+
         label {
-            margin-top: 15px;
-            font-weight: bold;
-            color: #555;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
+
         input[type="email"],
-        input[type="password"] {
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-        }
-        input[type="email"]:focus,
-        input[type="password"]:focus {
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 11px 13px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            background: var(--bg);
+            border: 0.5px solid var(--border-strong);
+            border-radius: 8px;
+            color: var(--text);
             outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
         }
-        button {
-            margin-top: 20px;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
+
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(14, 165, 160, 0.10);
+            background: var(--surface);
         }
-        button:hover {
-            background-color: #45a049;
-        }
-        .back-button {
-            display: block;
-            margin-top: 12px;
-            padding: 12px;
-            background-color: #6c757d;
-            color: white;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            text-decoration: none;
-        }
-        .back-button:hover {
-            background-color: #5a6268;
-        }
-        .error {
-            color: #d9534f;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-        }
+
+        input::placeholder { color: var(--muted); }
+
         .field-error {
-            color: #d9534f;
-            font-size: 12px;
-            margin-top: 3px;
+            font-size: 0.72rem;
+            color: var(--red);
+            margin-top: 2px;
         }
+
+        .divider {
+            height: 0.5px;
+            background: rgba(0,0,0,0.07);
+            margin: 22px 0;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background: var(--teal);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.12s;
+            margin-top: 4px;
+        }
+
+        button[type="submit"]:hover { background: var(--teal-dark); }
+
+        .forgot-wrap {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .forgot-wrap input {
+            flex: 1;
+            padding: 9px 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            background: var(--bg);
+            border: 0.5px solid var(--border-strong);
+            border-radius: 8px;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .forgot-wrap input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(14, 165, 160, 0.10);
+        }
+
+        .forgot-wrap button {
+            width: auto;
+            background: transparent;
+            color: var(--muted);
+            border: 0.5px solid var(--border-strong);
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.12s, color 0.12s;
+            margin-top: 0;
+        }
+
+        .forgot-wrap button:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.12s;
+        }
+
+        .back-link:hover { color: var(--text); }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Ticket Service Login</h1>
 
-        <!-- Flash Messages -->
-        <div th:if="${successMessage}" style="color:#155724;background:#d4edda;border:1px solid #c3e6cb;padding:10px 14px;border-radius:4px;margin-bottom:16px;">
-            <span th:text="${successMessage}"></span>
-        </div>
-        <div th:if="${errorMessage}" class="error">
-            <span th:text="${errorMessage}"></span>
+        <div class="brand-header">
+            <img th:src="@{/images/brand-logo.png}" alt="Brand logo">
+            <h1>Staff login</h1>
+            <p>Sign in to access your support dashboard.</p>
         </div>
 
-        <!-- Login Form -->
-        <form th:action="@{/login}" th:object="${loginForm}" method="post">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Email Field -->
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" th:field="*{email}" placeholder="Enter your email address" required>
-            <div th:if="${#fields.hasErrors('email')}" class="field-error">
-                <span th:errors="*{email}"></span>
-            </div>
+        <div class="form-card">
 
-            <!-- Password Field -->
-            <label for="password">Password:</label>
-            <input type="password" id="password" th:field="*{password}" placeholder="Enter your password" required>
-            <div th:if="${#fields.hasErrors('password')}" class="field-error">
-                <span th:errors="*{password}"></span>
-            </div>
+            <form th:action="@{/login}" th:object="${loginForm}" method="post">
 
-            <!-- Submit Button -->
-            <button type="submit">Login</button>
-        </form>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" th:field="*{email}" placeholder="jane@example.com" required>
+                    <div th:if="${#fields.hasErrors('email')}" class="field-error">
+                        <span th:errors="*{email}"></span>
+                    </div>
+                </div>
 
-        <!-- Forgot Password -->
-        <form action="/login/forgot-password" method="post" style="margin-top: 12px;">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-            <div style="display:flex; gap:8px; align-items:center;">
-                <input type="email" name="email" placeholder="Your email address" required
-                       style="flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:4px; font-size:13px;">
-                <button type="submit" style="padding:8px 14px; background:#6c757d; color:white; border:none; border-radius:4px; font-size:13px; cursor:pointer;">
-                    Forgot Password?
-                </button>
-            </div>
-        </form>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" th:field="*{password}" placeholder="Enter your password" required>
+                    <div th:if="${#fields.hasErrors('password')}" class="field-error">
+                        <span th:errors="*{password}"></span>
+                    </div>
+                </div>
 
-        <a class="back-button" th:href="@{/support-page}" style="margin-top:12px;">Return to Support Page</a>
+                <button type="submit">Sign in</button>
+
+            </form>
+
+            <div class="divider"></div>
+
+            <form action="/login/forgot-password" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="forgot-wrap">
+                    <input type="email" name="email" placeholder="Email for password reset" required>
+                    <button type="submit">Forgot password?</button>
+                </div>
+            </form>
+
+        </div>
+
+        <a class="back-link" th:href="@{/demo}">← Back to demo</a>
+
     </div>
+
     <script>
         const params = new URLSearchParams(window.location.hash.substring(1));
         const type = params.get('type');
@@ -144,5 +277,6 @@
             window.location.replace('/invite/accept' + window.location.hash);
         }
     </script>
+
 </body>
 </html>

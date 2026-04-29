@@ -52,7 +52,7 @@ public class SecurityConfiguration {
                 .loginPage("/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/navigation-page", true)
+                .defaultSuccessUrl("/demo", true)
                 .permitAll()
             )
             .logout(logout -> logout
