@@ -107,7 +107,7 @@ public class EmailController {
             ticketService.createTicket(ticket);
         } catch (Exception e) {
             logger.error("Failed to save ticket", e);
-            model.addAttribute("errorMessage", "❌ Database Error: Could not save ticket. " + e.getMessage());
+            model.addAttribute("errorMessage", "❌ Database Error: Could not save ticket. Please try again or contact support.");
             return "email-form";
         }
 
@@ -120,7 +120,7 @@ public class EmailController {
                                " saved and sent to " + ticket.getEmail() + attachmentInfo);
             model.addAttribute("ticket", new Ticket());
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "⚠️ Ticket saved to database, but email failed: " + e.getMessage());
+            model.addAttribute("errorMessage", "⚠️ Ticket saved to database, but email could not be sent. Please contact support.");
         }
 
         emailService.sendNewTicketNotification(ticket, userManagementService.getNotificationEmails());
@@ -189,6 +189,7 @@ public class EmailController {
         return "redirect:/tickets/" + id;
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_STAFF', 'ROLE_ADMIN')")
     @PostMapping("/tickets/{id}/delete")
     public String deleteTicket(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
