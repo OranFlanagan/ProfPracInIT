@@ -9,9 +9,7 @@ function toggleMoreIssues(btn) {
         btn.textContent = 'Show more issues';
         btn.dataset.expanded = 'false';
     } else {
-        document.querySelectorAll('.issue-card--hidden').forEach(card => {
-            card.style.display = 'block';
-        });
+        hidden.forEach(card => card.style.display = 'block');
         btn.textContent = 'Show fewer issues';
         btn.dataset.expanded = 'true';
     }
@@ -24,17 +22,20 @@ async function toggleFix(card) {
 
     if (panel.style.display === 'block') {
         panel.style.display = 'none';
+        card.classList.remove('open');
         return;
     }
 
     if (fixCache[issueId]) {
         panel.innerHTML = fixCache[issueId];
         panel.style.display = 'block';
+        card.classList.add('open');
         return;
     }
 
-    panel.innerHTML = '<p>Loading...</p>';
+    panel.innerHTML = '<p style="color:#94a3b8;font-size:0.82rem;">Loading...</p>';
     panel.style.display = 'block';
+    card.classList.add('open');
 
     try {
         const res = await fetch(`/api/issues/${issueId}/fixes`);
@@ -42,7 +43,7 @@ async function toggleFix(card) {
 
         const fixText = fixes.length
             ? `<p>${fixes[0].fixDescription}</p>`
-            : `<p>No fix available yet.</p>`;
+            : `<p style="color:#94a3b8;">No fix available yet.</p>`;
 
         const html = `
             ${fixText}
@@ -53,7 +54,8 @@ async function toggleFix(card) {
                         data-issue-id="${issueId}"
                         data-product-id="${productId}"
                         onclick="issueResolved(this)">Issue resolved</button>
-                    <button class="btn-problems" onclick="window.location.href='/email-form?issueId=${issueId}'">Still having problems</button>
+                    <button class="btn-problems"
+                        onclick="window.location.href='/email-form?issueId=${issueId}'">Still having problems</button>
                 </div>
             </div>
         `;
@@ -62,7 +64,7 @@ async function toggleFix(card) {
         panel.innerHTML = html;
 
     } catch (err) {
-        panel.innerHTML = '<p>Could not load fix.</p>';
+        panel.innerHTML = '<p style="color:#e53935;font-size:0.82rem;">Could not load fix.</p>';
     }
 }
 
@@ -80,10 +82,9 @@ async function issueResolved(btn) {
     });
 
     const panel = btn.closest('.fix-panel');
-    panel.innerHTML = '<p>Glad that sorted it!</p>';
+    panel.innerHTML = '<p style="color:#0b7a76;font-weight:500;">Glad that sorted it! ✓</p>';
 }
 
-// Hide extra issues on page load
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.issue-card--hidden').forEach(card => {
         card.style.display = 'none';
