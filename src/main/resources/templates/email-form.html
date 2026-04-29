@@ -1,211 +1,140 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Email</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-top: 15px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="email"],
-        input[type="text"],
-        input[type="file"],
-        textarea {
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-        }
-        input[type="email"]:focus,
-        input[type="text"]:focus,
-        input[type="file"]:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
-        }
-        textarea {
-            resize: vertical;
-            min-height: 150px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .back-button {
-            display: block;
-            margin-top: 12px;
-            padding: 12px;
-            background-color: #6c757d;
-            color: white;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            text-decoration: none;
-        }
-        .back-button:hover {
-            background-color: #5a6268;
-        }
-        .error {
-            color: #d9534f;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-        }
-        .success {
-            color: #155724;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-radius: 4px;
-        }
-        .field-error {
-            color: #d9534f;
-            font-size: 12px;
-            margin-top: 3px;
-        }
-    </style>
+    <title>Support Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/styles/ticket.css}">
+
 </head>
 <body>
+
     <div class="container">
-        <h1>Create Support Ticket</h1>
 
-        <!-- Success Message -->
-        <div th:if="${successMessage}" class="success">
-            <span th:text="${successMessage}"></span>
+<div class="brand-header">
+            <img th:src="@{/images/brand-logo.png}" alt="Brand logo" class="brand-logo">
+            <div class="brand-header-right">Support portal</div>
         </div>
 
-        <!-- Error Message -->
-        <div th:if="${errorMessage}" class="error">
-            <span th:text="${errorMessage}"></span>
+        <div class="page-header">
+            <h1>Create a support ticket</h1>
+            <p>Fill in the details below and we'll get back to you as soon as possible.</p>
         </div>
 
-        <!-- Ticket Form -->
-        <form th:action="@{/send-email}" th:object="${ticket}" method="post" enctype="multipart/form-data">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
 
-            <!-- Name Field -->
-            <label for="name">Full Name:</label>
-            <input type="text" id="name" th:field="*{name}" placeholder="Enter your full name" required>
-            <div th:if="${#fields.hasErrors('name')}" class="field-error">
-                <span th:errors="*{name}"></span>
-            </div>
+        <div class="form-card">
+            <form th:action="@{/send-email}" th:object="${ticket}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-            <!-- Email Field -->
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" th:field="*{email}" placeholder="Enter your email address" required>
-            <div th:if="${#fields.hasErrors('email')}" class="field-error">
-                <span th:errors="*{email}"></span>
-            </div>
+                <div class="form-grid">
 
-            <!-- Phone Number Field -->
-            <label for="phoneNum">Phone Number:</label>
-            <input type="text" id="phoneNum" th:field="*{phoneNum}" placeholder="Enter your phone number (optional)">
-            <div th:if="${#fields.hasErrors('phoneNum')}" class="field-error">
-                <span th:errors="*{phoneNum}"></span>
-            </div>
-
-            <!-- Invoice Number Field -->
-            <label for="invoiceNum">Invoice Number:</label>
-            <input type="text" id="invoiceNum" th:field="*{invoiceNum}" placeholder="Enter invoice number (if applicable)">
-            <div th:if="${#fields.hasErrors('invoiceNum')}" class="field-error">
-                <span th:errors="*{invoiceNum}"></span>
-            </div>
-
-            <!-- School/Organisation Field -->
-            <label for="schoolOrganisation">School/Organisation:</label>
-            <input type="text" id="schoolOrganisation" th:field="*{schoolOrganisation}" placeholder="Enter your school or organisation">
-            <div th:if="${#fields.hasErrors('schoolOrganisation')}" class="field-error">
-                <span th:errors="*{schoolOrganisation}"></span>
-            </div>
-
-            <!-- Issue Description Field -->
-            <label for="issueDescription">Issue Description:</label>
-            <textarea id="issueDescription" th:field="*{issueDescription}" placeholder="Describe the issue you're experiencing..." required></textarea>
-            <div th:if="${#fields.hasErrors('issueDescription')}" class="field-error">
-                <span th:errors="*{issueDescription}"></span>
-            </div>
-
-            <!-- Attachment Field -->
-
-                        <label for="attachment">Attachment (Optional):</label>
-                        <input type="file" id="attachment" th:field="*{attachment}" placeholder="Choose a file to attach" th:attr="data-max-size=${maxFileSize}" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4,.txt,.csv,.doc,.docx,.xlsx,.odt,.ods">
-                        <div class="field-error" style="color: #666; font-size: 12px; margin-top: 3px;">
-                                Max file size: <span th:text="${maxFileSize}"></span>
+                    <!-- Name -->
+                    <div class="form-group">
+                        <label for="name">Full name</label>
+                        <input type="text" id="name" th:field="*{name}" placeholder="Jane Smith" required>
+                        <div th:if="${#fields.hasErrors('name')}" class="field-error">
+                            <span th:errors="*{name}"></span>
                         </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" id="email" th:field="*{email}" placeholder="jane@example.com" required>
+                        <div th:if="${#fields.hasErrors('email')}" class="field-error">
+                            <span th:errors="*{email}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="form-group">
+                        <label for="phoneNum">Phone number <span style="font-size:0.65rem;">(optional)</span></label>
+                        <input type="text" id="phoneNum" th:field="*{phoneNum}" placeholder="+353 1 234 5678">
+                        <div th:if="${#fields.hasErrors('phoneNum')}" class="field-error">
+                            <span th:errors="*{phoneNum}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Invoice -->
+                    <div class="form-group">
+                        <label for="invoiceNum">Invoice number <span style="font-size:0.65rem;">(if applicable)</span></label>
+                        <input type="text" id="invoiceNum" th:field="*{invoiceNum}" placeholder="INV-00123">
+                        <div th:if="${#fields.hasErrors('invoiceNum')}" class="field-error">
+                            <span th:errors="*{invoiceNum}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Organisation -->
+                    <div class="form-group full">
+                        <label for="schoolOrganisation">School / organisation</label>
+                        <input type="text" id="schoolOrganisation" th:field="*{schoolOrganisation}" placeholder="e.g. St. Patrick's Secondary School">
+                        <div th:if="${#fields.hasErrors('schoolOrganisation')}" class="field-error">
+                            <span th:errors="*{schoolOrganisation}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-divider"></div>
+
+                    <!-- Issue Description -->
+                    <div class="form-group full">
+                        <label for="issueDescription">Issue description</label>
+                        <textarea id="issueDescription" th:field="*{issueDescription}" placeholder="Describe the issue you're experiencing in as much detail as possible..." required></textarea>
+                        <div th:if="${#fields.hasErrors('issueDescription')}" class="field-error">
+                            <span th:errors="*{issueDescription}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Attachment -->
+                    <div class="form-group full file-wrap">
+                        <label for="attachment">Attachment <span style="font-size:0.65rem;">(optional)</span></label>
+                        <input type="file" id="attachment" th:field="*{attachment}"
+                               th:attr="data-max-size=${maxFileSize}"
+                               accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4,.txt,.csv,.doc,.docx,.xlsx,.odt,.ods">
+                        <span class="file-hint">Max file size: <span th:text="${maxFileSize}"></span> — PDF, image, video, or document</span>
                         <div id="file-error" class="field-error"></div>
+                    </div>
 
-                        <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                                var fileInput = document.getElementById('attachment');
-                                var fileError = document.getElementById('file-error');
-                                var maxSizeStr = fileInput.getAttribute('data-max-size');
-                                // Convert maxSizeStr (e.g., '50MB', '100MB') to bytes
-                                function parseSize(str) {
-                                    if (!str) return 52428800; // default 50MB
-                                    str = str.trim().toUpperCase();
-                                    if (str.endsWith('MB')) return parseInt(str) * 1024 * 1024;
-                                    if (str.endsWith('KB')) return parseInt(str) * 1024;
-                                    if (str.endsWith('GB')) return parseInt(str) * 1024 * 1024 * 1024;
-                                    return parseInt(str);
-                                }
-                                var maxSize = parseSize(maxSizeStr);
-                                fileInput.addEventListener('change', function() {
-                                    if (this.files[0] && this.files[0].size > maxSize) {
-                                        fileError.innerText = 'File is too large. Max allowed is ' + maxSizeStr + '.';
-                                        this.value = '';
-                                    } else {
-                                        fileError.innerText = '';
-                                    }
-                                });
-                        });
-                        </script>
+                </div>
 
-            <!-- Submit Button -->
-            <button type="submit">Submit Ticket</button>
-        </form>
+                <div class="form-actions">
+                    <a class="back-button" th:href="@{/support-page}">← Back</a>
+                    <button type="submit">Submit ticket</button>
+                </div>
 
-        <a class="back-button" th:href="@{/navigation-page}">Back to Navigation</a>
+            </form>
+        </div>
+
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var fileInput = document.getElementById('attachment');
+            var fileError = document.getElementById('file-error');
+            var maxSizeStr = fileInput.getAttribute('data-max-size');
+
+            function parseSize(str) {
+                if (!str) return 52428800;
+                str = str.trim().toUpperCase();
+                if (str.endsWith('MB')) return parseInt(str) * 1024 * 1024;
+                if (str.endsWith('KB')) return parseInt(str) * 1024;
+                if (str.endsWith('GB')) return parseInt(str) * 1024 * 1024 * 1024;
+                return parseInt(str);
+            }
+
+            var maxSize = parseSize(maxSizeStr);
+
+            fileInput.addEventListener('change', function() {
+                if (this.files[0] && this.files[0].size > maxSize) {
+                    fileError.innerText = 'File is too large. Max allowed is ' + maxSizeStr + '.';
+                    this.value = '';
+                } else {
+                    fileError.innerText = '';
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
