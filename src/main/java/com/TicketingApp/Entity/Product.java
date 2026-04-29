@@ -23,6 +23,7 @@ public class Product {
     private String category;
 
     private String urlString;
+    private String code;
 
     private boolean featuredOnSupportPage;
 

@@ -38,22 +38,23 @@ public class AdminDeflectionController {
         return "admin-deflection-editor";
     }
 
-    @PostMapping("/admin-deflection-editor/add-product")
-    public String addProduct(
-        @RequestParam String name,
-        @RequestParam String category,
-        @RequestParam String urlString,
-        @RequestParam(defaultValue = "false") boolean featuredOnSupportPage
-    ) {
-        Product p = new Product();
-        p.setName(name);
-        p.setCategory(category);
-        p.setUrlString(urlString);
-        p.setFeaturedOnSupportPage(featuredOnSupportPage);
-        productRepository.save(p);
-        return "redirect:/admin-deflection-editor";
-    }
-
+  @PostMapping("/admin-deflection-editor/add-product")
+public String addProduct(
+    @RequestParam String name,
+    @RequestParam String category,
+    @RequestParam String urlString,
+    @RequestParam(required = false) String code, 
+    @RequestParam(defaultValue = "false") boolean featuredOnSupportPage
+) {
+    Product p = new Product();
+    p.setName(name);
+    p.setCategory(category);
+    p.setUrlString(urlString);
+    p.setCode(code); 
+    p.setFeaturedOnSupportPage(featuredOnSupportPage);
+    productRepository.save(p);
+    return "redirect:/admin-deflection-editor";
+}
     @PostMapping("/admin-deflection-editor/add-issue")
     public String addIssue(
         @RequestParam String title,

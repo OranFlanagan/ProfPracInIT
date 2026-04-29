@@ -24,6 +24,7 @@
 
     <h2 class="product-title" th:text="${product.name}">Product Name</h2>
 
+<p class="product-code" th:text="'SKU: ' + ${product.code}" th:if="${product.code != null and product.code != ''}"></p>
     <a href="/support-page" class="change-product">Change Product</a>
 </div>
 
