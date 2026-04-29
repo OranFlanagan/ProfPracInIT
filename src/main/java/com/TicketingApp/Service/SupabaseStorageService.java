@@ -15,7 +15,7 @@ public class SupabaseStorageService {
     @Value("${supabase.url}")
     private String SUPABASE_URL;
 
-    @Value("${supabase.key}")
+    @Value("${supabase.service_role_key}")
     private String SUPABASE_KEY;
 
     @Value("${supabase.bucket}")

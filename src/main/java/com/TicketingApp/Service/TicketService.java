@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.TicketingApp.Entity.Ticket;
 import com.TicketingApp.Entity.TicketStatus;
-import com.TicketingApp.Repository.EmailMessageRepository;
 import com.TicketingApp.Repository.TicketRepository;
 
 import java.io.IOException;
@@ -26,7 +25,6 @@ import java.util.Collections;
 public class TicketService {
 
   private final TicketRepository ticketRepository;
-    private final EmailMessageRepository emailMessageRepository;
     private static final Detector DETECTOR = new DefaultDetector();
 
     private static final Map<String, Set<String>> ALLOWED_FILE_TYPES = Map.ofEntries(
@@ -54,9 +52,8 @@ public class TicketService {
 
     private final SupabaseStorageService supabaseStorageService;
 
-    public TicketService(TicketRepository ticketRepository, EmailMessageRepository emailMessageRepository, SupabaseStorageService supabaseStorageService) {
+    public TicketService(TicketRepository ticketRepository, SupabaseStorageService supabaseStorageService) {
         this.ticketRepository = ticketRepository;
-        this.emailMessageRepository = emailMessageRepository;
         this.supabaseStorageService = supabaseStorageService;
     }
 
@@ -174,7 +171,6 @@ public class TicketService {
         if (ticket.getSupabaseFilename() != null && !ticket.getSupabaseFilename().isBlank()) {
             supabaseStorageService.deleteFile(ticket.getSupabaseFilename());
         }
-        emailMessageRepository.deleteByTicket(ticket);
         ticketRepository.delete(ticket);
         return true;
     }
