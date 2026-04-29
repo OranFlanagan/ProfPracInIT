@@ -3,6 +3,7 @@ const fixCache = {};
 async function toggleFix(card) {
     const panel = card.querySelector('.fix-panel');
     const issueId = card.dataset.issueId;
+    const productId = card.dataset.productId;
 
     if (panel.style.display === 'block') {
         panel.style.display = 'none';
@@ -31,7 +32,10 @@ async function toggleFix(card) {
             <div class="fix-feedback">
                 <p class="fix-feedback-label">Did this fix your issue?</p>
                 <div class="fix-feedback-buttons">
-                    <button class="btn-resolved" onclick="issueResolved(this)">Issue resolved</button>
+                    <button class="btn-resolved" 
+                        data-issue-id="${issueId}" 
+                        data-product-id="${productId}"
+                        onclick="issueResolved(this)">Issue resolved</button>
                     <button class="btn-problems" onclick="window.location.href='/email-form?issueId=${issueId}'">Still having problems</button>
                 </div>
             </div>
@@ -45,7 +49,19 @@ async function toggleFix(card) {
     }
 }
 
-function issueResolved(btn) {
+async function issueResolved(btn) {
+    const issueId = btn.dataset.issueId;
+    const productId = btn.dataset.productId;
+
+    await fetch('/common-issues/deflection-success', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            issueId: Number(issueId),
+            productId: Number(productId)
+        })
+    });
+
     const panel = btn.closest('.fix-panel');
     panel.innerHTML = '<p>Glad that sorted it!</p>';
 }

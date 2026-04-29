@@ -36,11 +36,11 @@
         <!-- Common Issues -->
 <div class="issues-section">
 
-    <div th:each="issue, iterStat : ${issues}"
-         th:if="${iterStat.index < 3}"
-         class="issue-card"
-         th:attr="data-issue-id=${issue.id}"
-         onclick="toggleFix(this)">
+ <div th:each="issue, iterStat : ${issues}"
+     th:if="${iterStat.index < 3}"
+     class="issue-card"
+     th:attr="data-issue-id=${issue.id},data-product-id=${product.id}"
+     onclick="toggleFix(this)">
 
         <h3 th:text="${issue.Title}">Issue Title</h3>
 

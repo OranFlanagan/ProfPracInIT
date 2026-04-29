@@ -15,9 +15,15 @@ public class SecurityConfiguration {
     @Autowired
     private SupabaseAuthenticationProvider supabaseAuthenticationProvider;
 
+
+
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(csrf -> csrf
+    .ignoringRequestMatchers("/common-issues/deflection-success")
+)
             .authenticationProvider(supabaseAuthenticationProvider)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/email-form/**").permitAll()
@@ -26,7 +32,9 @@ public class SecurityConfiguration {
                 .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/login/forgot-password").permitAll()
                 .requestMatchers("/support-page/**").permitAll()
+
                 .requestMatchers("/common-issues/**").permitAll()
+                .requestMatchers("/common-issues/deflection-success").permitAll()
                 .requestMatchers("/styles/**", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/product-cards.html").permitAll()
                 .requestMatchers("/autocomplete.html").permitAll()
@@ -35,9 +43,6 @@ public class SecurityConfiguration {
                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin-deflection-editor").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin-deflection-editor/**").hasAuthority("ROLE_ADMIN")
-                //for testing
-                //.requestMatchers("/admin-deflection-editor/**").permitAll()
-
                .requestMatchers("/admin-deflection-editor/add-product").hasAuthority("ROLE_ADMIN")
                .requestMatchers("/admin-deflection-editor/add-issue").hasAuthority("ROLE_ADMIN")
                .requestMatchers("/admin-deflection-editor/add-fix").hasAuthority("ROLE_ADMIN")
