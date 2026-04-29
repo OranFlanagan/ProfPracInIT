@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo — Product Support System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f7f9;
+            --surface: #ffffff;
+            --border-strong: rgba(0,0,0,0.13);
+            --teal: #0ea5a0;
+            --teal-light: #e0f7f6;
+            --teal-dark: #0b7a76;
+            --text: #0f172a;
+            --muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 48px 24px;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .top {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .top img {
+            height: 44px;
+            width: auto;
+            margin-bottom: 24px;
+        }
+
+        .top h1 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 10px;
+        }
+
+        .top p {
+            font-size: 1rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .section-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .card-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 36px;
+        }
+
+        .demo-card {
+            background: var(--surface);
+            border: 0.5px solid var(--border-strong);
+            border-left: 3px solid transparent;
+            border-radius: 10px;
+            padding: 22px 24px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-left-color 0.15s, background 0.12s;
+        }
+
+        .demo-card:hover {
+            border-left-color: var(--teal);
+            background: #f8fffe;
+        }
+
+        .demo-card-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .demo-card-title {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-card-desc {
+            font-size: 0.88rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .demo-card-arrow {
+            font-size: 1.2rem;
+            color: var(--muted);
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .badge-customer {
+            background: var(--teal-light);
+            color: var(--teal-dark);
+        }
+
+        .badge-admin {
+            background: #f1f5f9;
+            color: var(--muted);
+        }
+
+        .badge-staff {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .divider {
+            height: 0.5px;
+            background: var(--border-strong);
+            margin-bottom: 36px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top">
+        <img src="/images/brand-logo.png" alt="Brand logo">
+        <h1>Welcome to the support system demo</h1>
+        <p>Click through each section below to see the full flow — from a customer searching for their product to an admin managing issues, tickets, and staff.</p>
+    </div>
+
+    <!-- Customer journey -->
+    <div class="section-label">Customer journey</div>
+    <div class="card-group">
+        <a href="/support-page" class="demo-card">
+            <div class="demo-card-left">
+                <div class="demo-card-title">Product search <span class="badge badge-customer">Customer</span></div>
+                <div class="demo-card-desc">Customer lands here, searches for their product and selects it from the grid.</div>
+            </div>
+            <div class="demo-card-arrow">→</div>
+        </a>
+        <a href="/common-issues/1" class="demo-card">
+            <div class="demo-card-left">
+                <div class="demo-card-title">Common issues <span class="badge badge-customer">Customer</span></div>
+                <div class="demo-card-desc">Customer sees known issues for their product, expands one and tries the fix.</div>
+            </div>
+            <div class="demo-card-arrow">→</div>
+        </a>
+        <a href="/email-form" class="demo-card">
+            <div class="demo-card-left">
+                <div class="demo-card-title">Submit a ticket <span class="badge badge-customer">Customer</span></div>
+                <div class="demo-card-desc">If no fix works, customer fills in the support ticket form and submits.</div>
+            </div>
+            <div class="demo-card-arrow">→</div>
+        </a>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Staff access -->
+    <div class="section-label">Staff access</div>
+    <div class="card-group">
+        <a href="/login" class="demo-card">
+            <div class="demo-card-left">
+                <div class="demo-card-title">Staff login <span class="badge badge-staff">Staff</span></div>
+                <div class="demo-card-desc">Staff members sign in here to access their assigned ticket dashboard.</div>
+            </div>
+            <div class="demo-card-arrow">→</div>
+        </a>
+        <a href="/staff-dashboard" class="demo-card">
+            <div class="demo-card-left">
+                <div class="demo-card-title">Ticket dashboard <span class="badge badge-staff">Staff</span></div>
+                <div class="demo-card-desc">View all incoming support tickets and assign them to staff members for resolution.</div>
+            </div>
+            <div class="demo-card-arrow">→</div>
+        </a>
+        <a href="/admin-deflection-editor" class="demo-card">
+            <div class="demo-card-left">
+                <div class="demo-card-title">Product & issue manager <span class="badge badge-staff">Staff</span></div>
+                <div class="demo-card-desc">Add products, manage known issues, and write fixes that customers will see.</div>
+            </div>
+            <div class="demo-card-arrow">→</div>
+        </a>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Admin tools -->
+    <div class="section-label">Admin tools</div>
+    <div class="card-group">
+        <a href="/admin/register" class="demo-card">
+            <div class="demo-card-left">
+                <div class="demo-card-title">Register staff <span class="badge badge-admin">Admin</span></div>
+                <div class="demo-card-desc">Create new staff accounts and assign roles to control access levels.</div>
+            </div>
+            <div class="demo-card-arrow">→</div>
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

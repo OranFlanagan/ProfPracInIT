@@ -47,10 +47,7 @@ public class EmailController {
         this.supabaseStorageService = supabaseStorageService;
     }
 
-    @GetMapping("/")
-    public String root() {
-        return "redirect:/navigation-page";
-    }
+   
 
     @GetMapping("/navigation-page")
     public String showNavigation() {
