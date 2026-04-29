@@ -19,12 +19,14 @@ public class UserVariable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean receiveNotifications = false;
+
    public static enum Role {
 
     ROLE_STAFF,
     ROLE_ADMIN;
 }
-   
+
 
     // Getters and setters
     public Long getId() { return id; }
@@ -35,4 +37,6 @@ public class UserVariable {
     public void setUsername(String username) { this.username = username; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+    public boolean isReceiveNotifications() { return receiveNotifications; }
+    public void setReceiveNotifications(boolean receiveNotifications) { this.receiveNotifications = receiveNotifications; }
 }

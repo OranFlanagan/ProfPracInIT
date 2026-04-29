@@ -1,7 +1,7 @@
 package com.TicketingApp.Controller;
 
 import jakarta.validation.Valid;
- import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +30,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Controller
-
 public class EmailController {
     private static final Logger logger = LoggerFactory.getLogger(EmailController.class);
 
@@ -53,13 +52,11 @@ public class EmailController {
         return "redirect:/navigation-page";
     }
 
-    // Show navigation page
     @GetMapping("/navigation-page")
     public String showNavigation() {
         return "navigation-page";
     }
 
-    // Show staff dashboard
     @GetMapping("/staff-dashboard")
     public String showStaffDashboard(Model model, Authentication authentication,
                                      @RequestParam(defaultValue = "") String sort) {
@@ -84,39 +81,31 @@ public class EmailController {
         return "staff-dashboard";
     }
 
-    // Show the form
     @GetMapping("/email-form")
     public String showForm(Model model) {
-        // We provide a blank Ticket object for the form to bind to
         model.addAttribute("ticket", new Ticket());
-        // Pass max file size to the template
         String maxFileSize = System.getenv("MAX_FILE_SIZE");
         if (maxFileSize == null || maxFileSize.isBlank()) {
-            maxFileSize = "50MB"; // fallback default
+            maxFileSize = "50MB";
         }
         model.addAttribute("maxFileSize", maxFileSize);
         return "email-form";
     }
 
-    // Handle form submission
     @PostMapping("/send-email")
-    public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket, 
-                            BindingResult result, 
+    public String sendEmail(@Valid @ModelAttribute("ticket") Ticket ticket,
+                            BindingResult result,
                             Model model) {
-        // Always pass maxFileSize to the template
         String maxFileSize = System.getenv("MAX_FILE_SIZE");
         if (maxFileSize == null || maxFileSize.isBlank()) {
             maxFileSize = "50MB";
         }
         model.addAttribute("maxFileSize", maxFileSize);
 
-        // 1. Check for validation errors (Empty name, bad email, etc.)
         if (result.hasErrors()) {
-            return "email-form"; 
+            return "email-form";
         }
 
-        // 2. Always save to the Database first
-        // This ensures the data is kept even if the email fails
         try {
             ticketService.createTicket(ticket);
         } catch (Exception e) {
@@ -125,24 +114,23 @@ public class EmailController {
             return "email-form";
         }
 
-        // 3. Attempt to send the email
         try {
             emailService.sendSimpleEmail(ticket);
-            String attachmentInfo = (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty()) 
-                ? " with attachment" 
+            String attachmentInfo = (ticket.getAttachment() != null && !ticket.getAttachment().isEmpty())
+                ? " with attachment"
                 : "";
-            model.addAttribute("successMessage", "✅ Ticket #" + ticket.getOrderNum() + 
+            model.addAttribute("successMessage", "✅ Ticket #" + ticket.getOrderNum() +
                                " saved and sent to " + ticket.getEmail() + attachmentInfo);
-            // Reset the form after success
-            model.addAttribute("ticket", new Ticket()); 
+            model.addAttribute("ticket", new Ticket());
         } catch (Exception e) {
-            // If email fails, we tell the user the ticket was still saved to the DB
             model.addAttribute("errorMessage", "⚠️ Ticket saved to database, but email failed: " + e.getMessage());
         }
+
+        emailService.sendNewTicketNotification(ticket, userManagementService.getNotificationEmails());
+
         return "email-form";
     }
 
-    // Ticket detail view
     @GetMapping("/tickets/{id}")
     public String viewTicket(@PathVariable Long id, Model model) {
         Ticket ticket = ticketService.findById(id);
@@ -163,6 +151,7 @@ public class EmailController {
             .toList());
         return "ticket-details";
     }
+
     @PreAuthorize("hasAnyAuthority('ROLE_STAFF', 'ROLE_ADMIN')")
     @PostMapping("/tickets/{id}/assign")
     public String updateAssignedStaff(
@@ -186,11 +175,8 @@ public class EmailController {
         if (ticket == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Ticket not found");
         }
-
         return "redirect:" + resolveRedirectPath(id, redirectTo);
     }
-
-        // Download endpoint removed: attachments are now served via Supabase public URL
 
     @PreAuthorize("hasAnyAuthority('ROLE_STAFF', 'ROLE_ADMIN')")
     @PostMapping("/tickets/{id}/internal-notes")

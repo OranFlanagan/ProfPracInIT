@@ -245,18 +245,27 @@
                     <th>ID</th>
                     <th>Email</th>
                     <th>Role</th>
+                    <th>Notifications</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:if="${users == null or #lists.isEmpty(users)}">
-                    <td class="no-users" colspan="4">No users found.</td>
+                    <td class="no-users" colspan="5">No users found.</td>
                 </tr>
                 <tr th:each="user : ${users}">
                     <td class="col-id" th:text="${user.id}">1</td>
                     <td class="col-email" th:text="${user.email}">admin</td>
                     <td class="col-role">
                         <span class="role-badge" th:classappend="${user.role}" th:text="${user.role}">ROLE_STAFF</span>
+                    </td>
+                    <td>
+                        <form th:action="@{'/admin/staff/' + ${user.id} + '/toggle-notifications'}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <button type="submit" class="btn"
+                                    th:style="${user.receiveNotifications} ? 'background:#16a34a;color:white;border-color:#16a34a;' : 'background:#9ca3af;color:white;border-color:#9ca3af;'"
+                                    th:text="${user.receiveNotifications} ? 'On' : 'Off'">Off</button>
+                        </form>
                     </td>
                     <td class="col-actions">
                         <div class="actions-cell">

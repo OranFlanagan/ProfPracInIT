@@ -12,13 +12,14 @@ import com.TicketingApp.Entity.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
+import java.util.List;
 
 @Service
 public class EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
-    @Value("${app.mail.from:no-reply@conordurcan.site}")
+    @Value("${app.mail.from}")
     private String fromAddress;
 
     @Value("${resend.api.key}")
@@ -29,17 +30,14 @@ public class EmailService {
 
     public void sendSimpleEmail(Ticket ticket) {
         try {
-            // Validate and resolve sender and recipient addresses
-            String resolvedFrom = resolveValidAddress(fromAddress, "no-reply@conordurcan.site");
+            String resolvedFrom = requireValidAddress(fromAddress, "sender (app.mail.from)");
             String recipient = requireValidAddress(ticket.getEmail(), "recipient");
 
-            // Prepare email subject and HTML body
             String subject = String.format("[%d] | %s | %s",
                 ticket.getOrderNum(),
                 ticket.getEmail(),
                 ticket.getName());
 
-            // Get template and replace variables
             String template = emailTemplateService.getTicketSubmittedTemplate();
             String htmlBody = template
                 .replace("${ticket.issueDescription}", HtmlUtils.htmlEscape(ticket.getIssueDescription()))
@@ -47,10 +45,7 @@ public class EmailService {
                 .replace("${ticket.email}", HtmlUtils.htmlEscape(ticket.getEmail()))
                 .replace("${ticket.orderNum}", String.valueOf(ticket.getOrderNum()));
 
-            // Initialize Resend client with API key
             Resend resend = new Resend(resendApiKey);
-
-            // Build the Resend email request
             SendEmailRequest request = SendEmailRequest.builder()
                     .from(resolvedFrom)
                     .to(recipient)
@@ -58,7 +53,6 @@ public class EmailService {
                     .html(htmlBody)
                     .build();
 
-            // Send the email and log the response
             SendEmailResponse response = resend.emails().send(request);
             logger.info("Email sent via Resend, id: {}", response.getId());
 
@@ -71,13 +65,47 @@ public class EmailService {
         }
     }
 
-    private String resolveValidAddress(String candidate, String fallback) throws AddressException {
-        if (isValidAddress(candidate)) return candidate.trim();
-        if (isValidAddress(fallback)) {
-            logger.warn("Invalid app.mail.from '{}'; falling back to {}", candidate, fallback);
-            return fallback;
+    public void sendNewTicketNotification(Ticket ticket, List<String> recipients) {
+        if (recipients == null || recipients.isEmpty()) return;
+
+        String resolvedFrom;
+        try {
+            resolvedFrom = requireValidAddress(fromAddress, "sender (app.mail.from)");
+        } catch (AddressException e) {
+            logger.error("No valid sender address for ticket notification: {}", e.getMessage());
+            return;
         }
-        throw new AddressException("No valid sender email address configured");
+
+        String subject = String.format("New Ticket #%d submitted by %s", ticket.getOrderNum(), ticket.getName());
+        String htmlBody = String.format(
+            "<h2>New Support Ticket Received</h2>" +
+            "<p><strong>Ticket #:</strong> %d</p>" +
+            "<p><strong>Customer:</strong> %s</p>" +
+            "<p><strong>Email:</strong> %s</p>" +
+            "<p><strong>Phone:</strong> %s</p>" +
+            "<p><strong>Organisation:</strong> %s</p>" +
+            "<p><strong>Issue:</strong></p><p>%s</p>",
+            ticket.getOrderNum(),
+            HtmlUtils.htmlEscape(ticket.getName()),
+            HtmlUtils.htmlEscape(ticket.getEmail()),
+            ticket.getPhoneNum() != null ? HtmlUtils.htmlEscape(ticket.getPhoneNum()) : "—",
+            ticket.getSchoolOrganisation() != null ? HtmlUtils.htmlEscape(ticket.getSchoolOrganisation()) : "—",
+            HtmlUtils.htmlEscape(ticket.getIssueDescription())
+        );
+
+        Resend resend = new Resend(resendApiKey);
+        try {
+            SendEmailRequest request = SendEmailRequest.builder()
+                    .from(resolvedFrom)
+                    .to(recipients.toArray(new String[0]))
+                    .subject(subject)
+                    .html(htmlBody)
+                    .build();
+            SendEmailResponse response = resend.emails().send(request);
+            logger.info("Ticket notification sent to {} recipient(s), id: {}", recipients.size(), response.getId());
+        } catch (Exception e) {
+            logger.error("Failed to send ticket notification: {}", e.getMessage());
+        }
     }
 
     private String requireValidAddress(String candidate, String label) throws AddressException {

@@ -49,4 +49,17 @@ public class UserManagementService {
         userVariableRepository.deleteById(id);
         return true;
     }
+
+    public List<String> getNotificationEmails() {
+        return userVariableRepository.findByReceiveNotificationsTrue()
+                .stream().map(UserVariable::getEmail).toList();
+    }
+
+    public boolean toggleNotifications(Long id) {
+        UserVariable user = userVariableRepository.findById(id).orElse(null);
+        if (user == null) return false;
+        user.setReceiveNotifications(!user.isReceiveNotifications());
+        userVariableRepository.save(user);
+        return true;
+    }
 }

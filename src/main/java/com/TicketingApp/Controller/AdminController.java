@@ -123,4 +123,15 @@ public class AdminController {
         }
         return "redirect:/admin";
     }
+
+    @PostMapping("/staff/{id}/toggle-notifications")
+    public String toggleNotifications(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        boolean toggled = userManagementService.toggleNotifications(id);
+        if (toggled) {
+            redirectAttributes.addFlashAttribute("successMessage", "Notification preference updated.");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "User not found.");
+        }
+        return "redirect:/admin";
+    }
 }
