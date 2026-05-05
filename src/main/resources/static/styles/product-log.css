@@ -207,3 +207,22 @@ body {
     object-fit: contain;
     flex-shrink: 0;
 }
+
+
+.brand-logo-link {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-decoration: none;
+    gap: 4px;
+}
+
+.brand-back-link {
+    font-size: 0.72rem;
+    color: var(--muted, #6b7280);
+    letter-spacing: 0.01em;
+}
+
+.brand-logo-link:hover .brand-back-link {
+    color: var(--primary, #111);
+}

@@ -14,7 +14,12 @@
 <body>
 
 <header class="header">
-  <img th:src="@{/images/brand-logo.png}" alt="Brand logo" class="brand-logo">
+<div class="brand-header">
+    <a href="https://www.sgeducation.ie/" target="_blank" rel="noopener noreferrer" class="brand-logo-link">
+        <img th:src="@{/images/brand-logo.png}" alt="Brand logo" class="brand-logo">
+        <span class="brand-back-link">← Back to website</span>
+    </a>
+</div>
 
     <div class="search-wrapper"
          hx-get="/support-page/search"
