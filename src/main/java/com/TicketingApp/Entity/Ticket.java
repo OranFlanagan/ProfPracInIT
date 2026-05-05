@@ -38,6 +38,13 @@ public class Ticket {
     @Column(name = "school_organisation")
     private String schoolOrganisation;
 
+    @Column(name = "product_name")
+private String productName;
+
+@Column(name = "serial_number")
+private String serialNumber;
+
+
     @Column(columnDefinition = "TEXT")
     private String issueDescription;
 
@@ -81,6 +88,12 @@ public class Ticket {
 
         public String getSchoolOrganisation() { return schoolOrganisation; }
         public void setSchoolOrganisation(String schoolOrganisation) { this.schoolOrganisation = schoolOrganisation; }
+
+        public String getProductName() { return productName; }
+public void setProductName(String productName) { this.productName = productName; }
+
+public String getSerialNumber() { return serialNumber; }
+public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 
     public String getIssueDescription() { return issueDescription; }
     public void setIssueDescription(String issueDescription) { this.issueDescription = issueDescription; }

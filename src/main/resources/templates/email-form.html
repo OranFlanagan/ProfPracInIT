@@ -75,6 +75,25 @@
                         </div>
                     </div>
 
+                                       <!-- Product Name -->
+<div class="form-group">
+    <label for="productName">Product name</label>
+    <input type="text" id="productName" th:field="*{productName}" placeholder="e.g. MacBook Pro 14-inch">
+    <div th:if="${#fields.hasErrors('productName')}" class="field-error">
+        <span th:errors="*{productName}"></span>
+    </div>
+</div>
+
+<!-- Serial Number -->
+<div class="form-group">
+    <label for="serialNumber">Serial number <span style="font-size:0.65rem;">(if applicable)</span></label>
+    <input type="text" id="serialNumber" th:field="*{serialNumber}" placeholder="e.g. C02XG2JHJGH5">
+    <div th:if="${#fields.hasErrors('serialNumber')}" class="field-error">
+        <span th:errors="*{serialNumber}"></span>
+    </div>
+</div>
+
+
                     <div class="form-divider"></div>
 
                     <!-- Issue Description -->

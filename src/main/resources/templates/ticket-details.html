@@ -102,6 +102,17 @@
                     <div class="info-label">School / organisation</div>
                     <div class="info-value" th:text="${ticket.schoolOrganisation != null ? ticket.schoolOrganisation : '—'}"></div>
                 </div>
+
+                <div class="info-item">
+    <div class="info-label">Product name</div>
+    <div class="info-value" th:text="${ticket.productName != null ? ticket.productName : '—'}"></div>
+</div>
+<div class="info-item">
+    <div class="info-label">Serial number</div>
+    <div class="info-value" th:text="${ticket.serialNumber != null ? ticket.serialNumber : '—'}"></div>
+</div>
+
+
                 <div class="info-item">
                     <div class="info-label">Order #</div>
                     <div class="info-value" th:text="${ticket.orderNum}"></div>
